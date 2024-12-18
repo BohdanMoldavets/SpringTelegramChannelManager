@@ -1,6 +1,6 @@
 package com.moldavets.SpringTelegramChannelManager.service.message.Impl;
 
-import com.moldavets.SpringTelegramChannelManager.service.TelegramBotService;
+import com.moldavets.SpringTelegramChannelManager.bot.TelegramBot;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
 import com.moldavets.SpringTelegramChannelManager.utils.LogType;
 import lombok.extern.slf4j.Slf4j;
@@ -19,18 +19,18 @@ public class MessageSenderImpl implements MessageSender {
     //@Value("${bot.log.chat.id}")
     private final long LOG_CHAT_ID =-1002422084878L;
 
-    private final TelegramBotService TELEGRAM_BOT_SERVICE;
+    private final TelegramBot TELEGRAM_BOT;
 
     @Autowired
-    public MessageSenderImpl(TelegramBotService telegramBotService) {
-        this.TELEGRAM_BOT_SERVICE = telegramBotService;
+    public MessageSenderImpl(TelegramBot telegramBot) {
+        this.TELEGRAM_BOT = telegramBot;
     }
 
     @Override
     public void sendMessage(long chatId, String textToBeSent) {
         SendMessage message = new SendMessage(String.valueOf(chatId),textToBeSent);
         try {
-            TELEGRAM_BOT_SERVICE.execute(message);
+            TELEGRAM_BOT.execute(message);
             sendLog("Response message for chat [" + chatId + "]:" + textToBeSent, LogType.INFO);
         } catch (TelegramApiException e) {
             try {
@@ -58,7 +58,7 @@ public class MessageSenderImpl implements MessageSender {
     @Override
     public void executeScreenKeyboard(SendMessage message) {
         try {
-            TELEGRAM_BOT_SERVICE.execute(message);
+            TELEGRAM_BOT.execute(message);
         } catch (TelegramApiException e) {
             log.error(e.getMessage());
             sendLog(e.getMessage(), LogType.ERROR);
@@ -67,7 +67,7 @@ public class MessageSenderImpl implements MessageSender {
 
     private void sendLogToChat(String message) {
         try {
-            TELEGRAM_BOT_SERVICE.execute(
+            TELEGRAM_BOT.execute(
                     new SendMessage(
                             String.valueOf(LOG_CHAT_ID),
                             message)

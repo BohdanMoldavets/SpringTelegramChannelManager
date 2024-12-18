@@ -1,4 +1,4 @@
-package com.moldavets.SpringTelegramChannelManager.service;
+package com.moldavets.SpringTelegramChannelManager.service.user;
 
 
 import com.moldavets.SpringTelegramChannelManager.model.User;

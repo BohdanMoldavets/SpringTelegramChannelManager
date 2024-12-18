@@ -1,8 +1,6 @@
-package com.moldavets.SpringTelegramChannelManager.config;
+package com.moldavets.SpringTelegramChannelManager.bot.config;
 
-import com.moldavets.SpringTelegramChannelManager.service.TelegramBotService;
-import com.moldavets.SpringTelegramChannelManager.service.message.Impl.MessageSenderImpl;
-import lombok.extern.slf4j.Slf4j;
+import com.moldavets.SpringTelegramChannelManager.bot.TelegramBot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -14,11 +12,11 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 @Component
 public class BotInitializer {
 
-    private final TelegramBotService TELEGRAM_BOT_SERVICE;
+    private final TelegramBot TELEGRAM_BOT_SERVICE;
 
     @Autowired
-    public BotInitializer(TelegramBotService telegramBotService) {
-        this.TELEGRAM_BOT_SERVICE = telegramBotService;
+    public BotInitializer(TelegramBot telegramBot) {
+        this.TELEGRAM_BOT_SERVICE = telegramBot;
     }
 
     @EventListener({ContextRefreshedEvent.class})

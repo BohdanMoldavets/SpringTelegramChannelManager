@@ -1,4 +1,4 @@
-package com.moldavets.SpringTelegramChannelManager.config;
+package com.moldavets.SpringTelegramChannelManager.bot.config;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,8 +1,8 @@
-package com.moldavets.SpringTelegramChannelManager.service.Impl;
+package com.moldavets.SpringTelegramChannelManager.service.user.Impl;
 
 import com.moldavets.SpringTelegramChannelManager.model.User;
 import com.moldavets.SpringTelegramChannelManager.model.UserRepository;
-import com.moldavets.SpringTelegramChannelManager.service.UserService;
+import com.moldavets.SpringTelegramChannelManager.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
