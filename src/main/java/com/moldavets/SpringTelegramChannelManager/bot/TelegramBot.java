@@ -1,7 +1,8 @@
 package com.moldavets.SpringTelegramChannelManager.bot;
 
 import com.moldavets.SpringTelegramChannelManager.bot.config.BotConfig;
-import com.moldavets.SpringTelegramChannelManager.keyboard.Keyboard;
+import com.moldavets.SpringTelegramChannelManager.service.message.ActionHandler;
+import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.model.User;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
 import com.moldavets.SpringTelegramChannelManager.service.user.UserService;
@@ -12,9 +13,12 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import static java.lang.Math.toIntExact;
 
 
 @Slf4j
@@ -26,15 +30,18 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final MessageSender MESSAGE_SENDER;
     private final Keyboard KEYBOARD;
     private final UserService USER_SERVICE;
+    private final ActionHandler ACTION_HANDLER;
 
     @Autowired
     @Deprecated
     public TelegramBot(BotConfig botConfig, @Lazy MessageSender messageSender,
-                       Keyboard keyboard, UserService userService)  {
+                       Keyboard keyboard, UserService userService,
+                       ActionHandler actionHandler)  {
         this.CONFIG = botConfig;
         this.USER_SERVICE = userService;
         this.MESSAGE_SENDER = messageSender;
         this.KEYBOARD = keyboard;
+        this.ACTION_HANDLER = actionHandler;
     }
 
     @Override
@@ -61,17 +68,14 @@ public class TelegramBot extends TelegramLongPollingBot {
 
                 case "/start" -> registerUser(update.getMessage());
 
-                case "Linked Groups" -> MESSAGE_SENDER.executeScreenKeyboard(KEYBOARD.getLinkedGroupsMenu(chatId));
-
                 case "Menu" -> MESSAGE_SENDER.executeScreenKeyboard(KEYBOARD.getMainMenu(chatId));
-
-                case "My Profile" -> MESSAGE_SENDER.executeScreenKeyboard(KEYBOARD.getProfileMenu(chatId));
-
-                case "Send Posts" -> MESSAGE_SENDER.executeScreenKeyboard(KEYBOARD.getSendPostsMenu(chatId));
 
                 default -> MESSAGE_SENDER.sendMessage(chatId, "Command does not exist");
             }
 
+        } else if(update.hasCallbackQuery()) {
+            MESSAGE_SENDER.sendLog("Inside block " + update.getCallbackQuery().getData(), LogType.INFO);
+            //ACTION_HANDLER.handleAction(update);
         }
     }
 
