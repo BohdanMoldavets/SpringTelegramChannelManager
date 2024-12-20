@@ -24,9 +24,9 @@ public class KeyboardImpl implements Keyboard {
         List<List<InlineKeyboardButton>> rowsLine = new ArrayList<>();
         List<InlineKeyboardButton> row = new ArrayList<>();
 
-        //row.add(createButton("Send Posts", "SEND_POSTS"));
-        //row.add(createButton("Liked Groups", "LINKED_GROUPS"));
-        //rowsLine.add(row);
+        row.add(createButton("Send Posts", "SEND_POSTS"));
+        row.add(createButton("Liked Groups", "LINKED_GROUPS"));
+        rowsLine.add(row);
 
         row = new ArrayList<>();
         row.add(createButton("My Profile", "MY_PROFILE"));
@@ -39,7 +39,8 @@ public class KeyboardImpl implements Keyboard {
         return MESSAGE_TO_BE_SENT;
     }
 
-    private InlineKeyboardButton createButton(String text, String callbackData) {
+    @Override
+    public InlineKeyboardButton createButton(String text, String callbackData) {
         InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText(text);
         button.setCallbackData(callbackData);

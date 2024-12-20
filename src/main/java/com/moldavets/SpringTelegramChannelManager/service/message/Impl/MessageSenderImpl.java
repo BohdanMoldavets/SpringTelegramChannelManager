@@ -9,6 +9,8 @@ import org.jvnet.hk2.annotations.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Slf4j
@@ -41,6 +43,37 @@ public class MessageSenderImpl implements MessageSender {
         }
     }
 
+    @Override
+    public void executeCustomMessage(SendMessage message) {
+        try {
+            TELEGRAM_BOT.execute(message);
+        } catch (TelegramApiException e) {
+            log.error(e.getMessage());
+            sendLog(e.getMessage(), LogType.ERROR);
+        }
+    }
+
+    @Override
+    public void executeEditMessage(EditMessageText message) {
+        try {
+            TELEGRAM_BOT.execute(message);
+        } catch (TelegramApiException e) {
+            log.error(e.getMessage());
+            sendLog(e.getMessage(), LogType.ERROR);
+        }
+    }
+
+    @Override
+    public void executeDeleteMessage(DeleteMessage message) {
+        try {
+            TELEGRAM_BOT.execute(message);
+        } catch (TelegramApiException e) {
+            log.error(e.getMessage());
+            sendLog(e.getMessage(), LogType.ERROR);
+        }
+    }
+
+    @Override
     public void sendLog(String message, LogType logType) {
         switch (logType) {
             case INFO:
@@ -52,16 +85,6 @@ public class MessageSenderImpl implements MessageSender {
                 log.error(message);
                 sendLogToChat("[" + LogType.ERROR + "] " + message);
                 break;
-        }
-    }
-
-    @Override
-    public void executeScreenKeyboard(SendMessage message) {
-        try {
-            TELEGRAM_BOT.execute(message);
-        } catch (TelegramApiException e) {
-            log.error(e.getMessage());
-            sendLog(e.getMessage(), LogType.ERROR);
         }
     }
 
