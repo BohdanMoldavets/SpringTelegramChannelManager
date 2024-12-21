@@ -73,19 +73,17 @@ public class ActionHandlerImpl implements ActionHandler {
     public void handleCommand(Update update) {
         String message = update.getMessage()
                                .getText();
-        long chatId = update.getMessage()
-                            .getChatId();
 
         if (message.equals("/start")) {
-            registerUser(update.getMessage());
+            registerUser(update);
         } else {
-            MESSAGE_SENDER.sendMessage(chatId, "Command does not exist");
+            MESSAGE_SENDER.sendMessage(update, "Command does not exist");
         }
     }
 
-    private void registerUser(Message message) {
-        long chatId = message.getChatId();
-        Chat chat = message.getChat();
+    private void registerUser(Update update) {
+        long chatId = update.getMessage().getChatId();
+        Chat chat = update.getMessage().getChat();
         if(USER_SERVICE.findById(chatId) == null) {
             User tempUser = new User();
 
@@ -93,7 +91,7 @@ public class ActionHandlerImpl implements ActionHandler {
             tempUser.setUsername(chat.getUserName());
 
             USER_SERVICE.save(tempUser);
-            MESSAGE_SENDER.sendLog("User " + chat.getUserName() + "[" + chatId +"]" + " has been registered", LogType.INFO);
+            MESSAGE_SENDER.sendLog(update, "has been registered", LogType.INFO);
         }
         MESSAGE_SENDER.executeCustomMessage(KEYBOARD.getMainMenu(chatId));
     }

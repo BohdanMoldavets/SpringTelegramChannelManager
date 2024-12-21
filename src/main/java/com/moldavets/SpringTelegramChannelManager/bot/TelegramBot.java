@@ -44,13 +44,8 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         if(update.hasMessage() && update.getMessage().hasText()) {
-
-            MESSAGE_SENDER.sendLog(update.getMessage().getChat().getUserName() + "[" + update.getMessage().getChatId() + "]" + ":" + update.getMessage().getText(), LogType.INFO);
-
             ACTION_HANDLER.handleCommand(update);
         } else if(update.hasCallbackQuery()) {
-            MESSAGE_SENDER.sendLog("Inside block " + update.getCallbackQuery().getData(), LogType.INFO);
-
             ACTION_HANDLER.handleAction(update);
         }
     }
