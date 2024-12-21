@@ -1,10 +1,13 @@
 package com.moldavets.SpringTelegramChannelManager.service.message.Impl;
 
-import com.moldavets.SpringTelegramChannelManager.model.User;
+import com.moldavets.SpringTelegramChannelManager.dao.AppDAO;
+import com.moldavets.SpringTelegramChannelManager.entity.LinkedGroup;
+import com.moldavets.SpringTelegramChannelManager.entity.Role;
+import com.moldavets.SpringTelegramChannelManager.entity.Subscription;
+import com.moldavets.SpringTelegramChannelManager.entity.User;
 import com.moldavets.SpringTelegramChannelManager.service.message.ActionHandler;
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
-import com.moldavets.SpringTelegramChannelManager.service.user.UserService;
 import com.moldavets.SpringTelegramChannelManager.utils.LogType;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -12,10 +15,7 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Chat;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,19 +26,20 @@ public class ActionHandlerImpl implements ActionHandler {
 
     private final MessageSender MESSAGE_SENDER;
     private final Keyboard KEYBOARD;
-    private final UserService USER_SERVICE;
+    private final AppDAO APP_DAO;
     private String lastAction;
 
     public ActionHandlerImpl(@Lazy MessageSender messageSender, Keyboard keyboard,
-                             UserService userService) {
+                             AppDAO appDAO) {
         this.MESSAGE_SENDER = messageSender;
         this.KEYBOARD = keyboard;
-        this.USER_SERVICE = userService;
+        this.APP_DAO = appDAO;
     }
 
     @Override
     public void handleAction(Update update) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
+        lastAction = callbackQuery.getData();
         MESSAGE_SENDER.sendLog(update,"Inside block " + callbackQuery.getData(), LogType.INFO);
         switch (callbackQuery.getData()) {
             case "MENU":
@@ -51,8 +52,37 @@ public class ActionHandlerImpl implements ActionHandler {
                 break;
 
             case "MY_PROFILE":
-                String MyProfileText = "My Profile";
-                EditMessageText answerForMyProfileMenu = buildAnswer(MyProfileText,callbackQuery);
+                StringBuilder MyProfileText = new StringBuilder();
+                long chatId = callbackQuery.getMessage().getChatId();
+                Subscription subscription = APP_DAO.findById(chatId).getSubscription();
+                MyProfileText.append("My Profile:\n")
+                        .append("\t Username: ")
+                        .append(APP_DAO.findById(callbackQuery.getMessage().getChatId()).getUsername())
+                        .append("\n")
+                        .append("\t User ID: ")
+                        .append(callbackQuery.getMessage().getChatId())
+                        .append("\n")
+                        .append("\t Subscription: ");
+
+                if(subscription != null) {
+                    if(subscription.getStatus()) {
+                        MyProfileText.append("Expires in - ")
+                                .append(subscription.getEndDate().getYear())
+                                .append("-")
+                                .append(subscription.getEndDate().getMonthValue())
+                                .append("-")
+                                .append(subscription.getEndDate().getDayOfMonth())
+                                .append("\n")
+                                .append("\t Subscription purchases: ")
+                                .append(subscription.getPurchaseCount());
+                    } else {
+                        MyProfileText.append("Not subscribed");
+                    }
+                }
+
+                EditMessageText answerForMyProfileMenu = buildAnswer(MyProfileText.toString(),callbackQuery);
+
+                //creating buttons menu
 
                 List<List<String>> buttonsMenuForMyProfileMenu = new ArrayList<>();
 
@@ -104,6 +134,7 @@ public class ActionHandlerImpl implements ActionHandler {
 
         if (message.equals("/start")) {
             registerUser(update);
+            lastAction = "MENU";
         } else {
             MESSAGE_SENDER.sendMessage(update, "Command does not exist");
         }
@@ -112,13 +143,16 @@ public class ActionHandlerImpl implements ActionHandler {
     private void registerUser(Update update) {
         long chatId = update.getMessage().getChatId();
         Chat chat = update.getMessage().getChat();
-        if(USER_SERVICE.findById(chatId) == null) {
+        if(APP_DAO.findById(chatId) == null) {
             User tempUser = new User();
 
             tempUser.setId(chatId);
             tempUser.setUsername(chat.getUserName());
+            tempUser.setRole(new Role("ROLE_USER"));
+            tempUser.addLinkedGroup(new LinkedGroup(123));
+            tempUser.addMonthlySubscription();
 
-            USER_SERVICE.save(tempUser);
+            APP_DAO.save(tempUser);
             MESSAGE_SENDER.sendLog(update, "has been registered", LogType.INFO);
         }
         MESSAGE_SENDER.executeCustomMessage(KEYBOARD.getMainMenu(chatId));
