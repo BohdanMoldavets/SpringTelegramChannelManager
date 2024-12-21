@@ -39,6 +39,7 @@ public class ActionHandlerImpl implements ActionHandler {
     @Override
     public void handleAction(Update update) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
+        MESSAGE_SENDER.sendLog(update,"Inside block " + callbackQuery.getData(), LogType.INFO);
         switch (callbackQuery.getData()) {
             case "MENU":
                 MESSAGE_SENDER.executeDeleteMessage(DeleteMessage

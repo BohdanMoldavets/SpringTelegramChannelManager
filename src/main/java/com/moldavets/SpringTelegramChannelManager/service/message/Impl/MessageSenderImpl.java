@@ -32,7 +32,7 @@ public class MessageSenderImpl implements MessageSender {
 
     @Override
     public void sendMessage(Update update, String message) {
-        long chatId = update.getMessage().getChatId();
+        long chatId = update.hasMessage() && update.getMessage().hasText() ? update.getMessage().getChatId() : update.getCallbackQuery().getMessage().getChatId();
         SendMessage answer = new SendMessage(String.valueOf(chatId),message);
         try {
             TELEGRAM_BOT.execute(answer);
@@ -72,8 +72,16 @@ public class MessageSenderImpl implements MessageSender {
 
     @Override
     public void sendLog(Update update, String message, LogType logType) {
-        long chatId = update.getMessage().getChatId();
-        String username = update.getMessage().getFrom().getUserName();
+        long chatId;
+        String username;
+        if(update.hasMessage() && update.getMessage().hasText()) {
+            chatId = update.getMessage().getChatId();
+            username = update.getMessage().getFrom().getUserName();
+        } else {
+            chatId = update.getCallbackQuery().getMessage().getChatId();
+            username = update.getCallbackQuery().getFrom().getUserName();
+        }
+
 
         switch (logType) {
             case INFO:
