@@ -70,7 +70,20 @@ public class ActionHandlerImpl implements ActionHandler {
     }
 
     @Override
-    public void registerUser(Message message) {
+    public void handleCommand(Update update) {
+        String message = update.getMessage()
+                               .getText();
+        long chatId = update.getMessage()
+                            .getChatId();
+
+        if (message.equals("/start")) {
+            registerUser(update.getMessage());
+        } else {
+            MESSAGE_SENDER.sendMessage(chatId, "Command does not exist");
+        }
+    }
+
+    private void registerUser(Message message) {
         long chatId = message.getChatId();
         Chat chat = message.getChat();
         if(USER_SERVICE.findById(chatId) == null) {
