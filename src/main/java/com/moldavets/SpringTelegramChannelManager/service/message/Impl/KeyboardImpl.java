@@ -40,11 +40,40 @@ public class KeyboardImpl implements Keyboard {
     }
 
     @Override
-    public InlineKeyboardButton createButton(String text, String callbackData) {
+    public InlineKeyboardMarkup createButtonMenu(List<List<String>> buttons) {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rowsLine = new ArrayList<>();
+
+        for (List<String> row : buttons) {
+            rowsLine.add(createButtonRow(row));
+        }
+
+        inlineKeyboardMarkup.setKeyboard(rowsLine);
+
+        return inlineKeyboardMarkup;
+    }
+
+
+    private List<InlineKeyboardButton> createButtonRow(List<String> buttons) {
+        List<InlineKeyboardButton> row = new ArrayList<>();
+
+        for (String button : buttons) {
+            row.add(createButton(button, buildCallbackData(button)));
+        }
+
+        return row;
+    }
+
+
+    private InlineKeyboardButton createButton(String text, String callbackData) {
         InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText(text);
         button.setCallbackData(callbackData);
         return button;
+    }
+
+    private String buildCallbackData(String text) {
+        return text.toUpperCase().replace(' ', '_');
     }
 
 

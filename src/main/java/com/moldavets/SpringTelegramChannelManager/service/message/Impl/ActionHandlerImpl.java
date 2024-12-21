@@ -53,18 +53,45 @@ public class ActionHandlerImpl implements ActionHandler {
             case "MY_PROFILE":
                 String MyProfileText = "My Profile";
                 EditMessageText answerForMyProfileMenu = buildAnswer(MyProfileText,callbackQuery);
+
+                List<List<String>> buttonsMenuForMyProfileMenu = new ArrayList<>();
+
+                List<String> buttonRowForMyProfileMenu = new ArrayList<>();
+                buttonRowForMyProfileMenu.add("Menu");
+
+                buttonsMenuForMyProfileMenu.add(buttonRowForMyProfileMenu);
+
+                answerForMyProfileMenu.setReplyMarkup(KEYBOARD.createButtonMenu(buttonsMenuForMyProfileMenu));
                 MESSAGE_SENDER.executeEditMessage(answerForMyProfileMenu);
                 break;
 
             case "LINKED_GROUPS":
                 String LinkedGroupsText = "Linked Groups";
                 EditMessageText answerForLinkedGroupsMenu = buildAnswer(LinkedGroupsText,callbackQuery);
+
+                List<List<String>> buttonsMenuForLinkedGroupsMenu = new ArrayList<>();
+
+                List<String> buttonRowForLinkedGroupsMenu = new ArrayList<>();
+                buttonRowForLinkedGroupsMenu.add("Menu");
+
+                buttonsMenuForLinkedGroupsMenu.add(buttonRowForLinkedGroupsMenu);
+
+                answerForLinkedGroupsMenu.setReplyMarkup(KEYBOARD.createButtonMenu(buttonsMenuForLinkedGroupsMenu));
                 MESSAGE_SENDER.executeEditMessage(answerForLinkedGroupsMenu);
                 break;
 
             case "SEND_POSTS":
                 String SendPostsText = "Send Posts";
                 EditMessageText answerForSendPostsMenu = buildAnswer(SendPostsText,callbackQuery);
+
+                List<List<String>> buttonsMenuForSendPostsMenu = new ArrayList<>();
+
+                List<String> buttonRowForSendPostsMenu = new ArrayList<>();
+                buttonRowForSendPostsMenu.add("Menu");
+
+                buttonsMenuForSendPostsMenu.add(buttonRowForSendPostsMenu);
+
+                answerForSendPostsMenu.setReplyMarkup(KEYBOARD.createButtonMenu(buttonsMenuForSendPostsMenu));
                 MESSAGE_SENDER.executeEditMessage(answerForSendPostsMenu);
                 break;
         }
@@ -98,22 +125,11 @@ public class ActionHandlerImpl implements ActionHandler {
     }
 
     private EditMessageText buildAnswer(String text, CallbackQuery callbackQuery) {
-        EditMessageText message = EditMessageText.builder()
+
+        return EditMessageText.builder()
                 .chatId(callbackQuery.getMessage().getChatId())
                 .messageId(callbackQuery.getMessage().getMessageId())
                 .text(text)
                 .build();
-
-        //TODO
-        //move to public method into keyboardimpl and return keyboard markups
-
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rowsLine = new ArrayList<>();
-        List<InlineKeyboardButton> row = new ArrayList<>();
-        row.add(KEYBOARD.createButton("Menu","MENU"));
-        rowsLine.add(row);
-        inlineKeyboardMarkup.setKeyboard(rowsLine);
-        message.setReplyMarkup(inlineKeyboardMarkup);
-        return message;
-    };
+    }
 }

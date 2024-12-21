@@ -19,15 +19,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class TelegramBot extends TelegramLongPollingBot {
 
     private final BotConfig CONFIG;
-    private final MessageSender MESSAGE_SENDER;
     private final ActionHandler ACTION_HANDLER;
 
     @Autowired
     @Deprecated
-    public TelegramBot(BotConfig botConfig, @Lazy MessageSender messageSender,
-                       ActionHandler actionHandler)  {
+    public TelegramBot(BotConfig botConfig, ActionHandler actionHandler)  {
         this.CONFIG = botConfig;
-        this.MESSAGE_SENDER = messageSender;
         this.ACTION_HANDLER = actionHandler;
     }
 
