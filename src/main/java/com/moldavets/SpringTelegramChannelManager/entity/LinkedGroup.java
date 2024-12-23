@@ -11,29 +11,36 @@ public class LinkedGroup {
     @Column(name = "id")
     private int id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL,
+               fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "group_id")
-    private long group_id;
+    private long groupId;
+
 
     public LinkedGroup() {
     }
 
-    public LinkedGroup(long group_id) {
-        this.group_id = group_id;
+    public LinkedGroup(long groupId) {
+        this.groupId = groupId;
     }
 
     public void setUser(User user) {
         this.user = user;
     }
 
-    public long getGroup_id() {
-        return group_id;
+    public User getUser() {
+        return user;
     }
 
-    public void setGroup_id(long group_id) {
-        this.group_id = group_id;
+    public long getGroupId() {
+        return groupId;
     }
+
+    public void setGroupId(long groupId) {
+        this.groupId = groupId;
+    }
+
 }

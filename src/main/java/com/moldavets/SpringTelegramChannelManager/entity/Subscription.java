@@ -34,6 +34,13 @@ public class Subscription {
         setPurchaseCount(0);
     }
 
+    public void addMonthlySubscription() {
+        this.status = true;
+        this.startDate = LocalDateTime.now();
+        this.endDate = LocalDateTime.now().plusMonths(1);
+        this.purchaseCount++;
+    }
+
     public User getUser() {
         return user;
     }
@@ -72,5 +79,16 @@ public class Subscription {
 
     public void setPurchaseCount(int purchaseCount) {
         this.purchaseCount = purchaseCount;
+    }
+
+    @Override
+    public String toString() {
+        return "Subscription{" +
+                "id=" + id +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", status=" + status +
+                ", purchaseCount=" + purchaseCount +
+                '}';
     }
 }

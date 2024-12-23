@@ -17,8 +17,8 @@ public class User {
     @Column(name = "username")
     private String username;
 
-    @OneToMany(mappedBy = "user",
-            cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,
+               fetch = FetchType.EAGER)
     private List<LinkedGroup> linkedGroups;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
@@ -61,6 +61,8 @@ public class User {
         linkedGroups.add(linkedGroup);
     }
 
+    public void deleteLinkedGroup(LinkedGroup linkedGroup) {}
+
     public Role getRole() {
         return role;
     }
@@ -74,10 +76,8 @@ public class User {
         return subscription;
     }
 
-    public void addMonthlySubscription() {
-        subscription.setStatus(true);
-        subscription.setStartDate(LocalDateTime.now());
-        subscription.setEndDate(LocalDateTime.now().plusMonths(1));
-        subscription.setPurchaseCount(subscription.getPurchaseCount() + 1);
+    public void setSubscription(Subscription subscription) {
+        subscription.setUser(this);
+        this.subscription = subscription;
     }
 }
