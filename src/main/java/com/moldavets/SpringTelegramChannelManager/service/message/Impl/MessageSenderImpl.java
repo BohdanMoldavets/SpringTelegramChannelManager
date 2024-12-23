@@ -9,6 +9,10 @@ import org.jvnet.hk2.annotations.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Slf4j
@@ -27,41 +31,68 @@ public class MessageSenderImpl implements MessageSender {
     }
 
     @Override
-    public void sendMessage(long chatId, String textToBeSent) {
-        SendMessage message = new SendMessage(String.valueOf(chatId),textToBeSent);
+    public void sendMessage(Update update, String message) {
+        long chatId = update.hasMessage() && update.getMessage().hasText() ? update.getMessage().getChatId() : update.getCallbackQuery().getMessage().getChatId();
+        SendMessage answer = new SendMessage(String.valueOf(chatId),message);
         try {
-            TELEGRAM_BOT.execute(message);
-            sendLog("Response message for chat [" + chatId + "]:" + textToBeSent, LogType.INFO);
+            TELEGRAM_BOT.execute(answer);
+            sendLog(update, update.getMessage().getText(), LogType.INFO);
+            sendLog(update, "Response for previous message: " + message, LogType.INFO);
         } catch (TelegramApiException e) {
-            try {
-                sendLog(e.getMessage(), LogType.ERROR);
-            } catch (Exception ex) {
-                log.error(ex.getMessage());
-            }
-        }
-    }
-
-    public void sendLog(String message, LogType logType) {
-        switch (logType) {
-            case INFO:
-                log.info(message);
-                sendLogToChat("[" + LogType.INFO + "] " + message);
-                break;
-
-            case ERROR:
-                log.error(message);
-                sendLogToChat("[" + LogType.ERROR + "] " + message);
-                break;
+            log.error(e.getMessage());
         }
     }
 
     @Override
-    public void executeScreenKeyboard(SendMessage message) {
+    public void executeCustomMessage(SendMessage message) {
         try {
             TELEGRAM_BOT.execute(message);
         } catch (TelegramApiException e) {
             log.error(e.getMessage());
-            sendLog(e.getMessage(), LogType.ERROR);
+        }
+    }
+
+    @Override
+    public void executeEditMessage(EditMessageText message) {
+        try {
+            TELEGRAM_BOT.execute(message);
+        } catch (TelegramApiException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public void executeDeleteMessage(DeleteMessage message) {
+        try {
+            TELEGRAM_BOT.execute(message);
+        } catch (TelegramApiException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public void sendLog(Update update, String message, LogType logType) {
+        long chatId;
+        String username;
+        if(update.hasMessage() && update.getMessage().hasText()) {
+            chatId = update.getMessage().getChatId();
+            username = update.getMessage().getFrom().getUserName();
+        } else {
+            chatId = update.getCallbackQuery().getMessage().getChatId();
+            username = update.getCallbackQuery().getFrom().getUserName();
+        }
+
+
+        switch (logType) {
+            case INFO:
+                log.info(message);
+                sendLogToChat("[" + LogType.INFO + "] " + username + "[" + chatId + "] " + message);
+                break;
+
+            case ERROR:
+                log.error(message);
+                sendLogToChat("[" + LogType.ERROR + "] " + username + "[" + chatId + "] " + message);
+                break;
         }
     }
 
@@ -74,7 +105,6 @@ public class MessageSenderImpl implements MessageSender {
             );
         } catch (TelegramApiException e) {
             log.error(e.getMessage());
-            sendLog(e.getMessage(), LogType.ERROR);
         }
     }
 }
