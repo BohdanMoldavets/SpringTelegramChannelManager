@@ -1,6 +1,5 @@
 package com.moldavets.SpringTelegramChannelManager.dao;
 
-import com.moldavets.SpringTelegramChannelManager.entity.LinkedGroup;
 import com.moldavets.SpringTelegramChannelManager.entity.Role;
 import com.moldavets.SpringTelegramChannelManager.entity.Subscription;
 import com.moldavets.SpringTelegramChannelManager.entity.User;

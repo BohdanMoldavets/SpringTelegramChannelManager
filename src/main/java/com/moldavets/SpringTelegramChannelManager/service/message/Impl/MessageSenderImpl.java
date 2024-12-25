@@ -2,7 +2,7 @@ package com.moldavets.SpringTelegramChannelManager.service.message.Impl;
 
 import com.moldavets.SpringTelegramChannelManager.bot.TelegramBot;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
-import com.moldavets.SpringTelegramChannelManager.utils.LogType;
+import com.moldavets.SpringTelegramChannelManager.utils.log.LogType;
 import lombok.extern.slf4j.Slf4j;
 import org.jvnet.hk2.annotations.Service;
 
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -38,6 +37,16 @@ public class MessageSenderImpl implements MessageSender {
             TELEGRAM_BOT.execute(answer);
             sendLog(update, update.getMessage().getText(), LogType.INFO);
             sendLog(update, "Response for previous message: " + message, LogType.INFO);
+        } catch (TelegramApiException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public void sendMessage(String chatId, String message) {
+        SendMessage answer = new SendMessage(chatId,message);
+        try {
+            TELEGRAM_BOT.execute(answer);
         } catch (TelegramApiException e) {
             log.error(e.getMessage());
         }
