@@ -105,6 +105,22 @@ public class MessageSenderImpl implements MessageSender {
         }
     }
 
+    @Override
+    public void sendLog(String chatId, String username, String message, LogType logType) {
+        String logMessage = username + "[" + chatId + "] " + message;
+        switch (logType) {
+            case INFO:
+                log.info(logMessage);
+                sendLogToChat("[" + LogType.INFO + "] " + username + "[" + chatId + "] " + message);
+                break;
+
+            case ERROR:
+                log.error(logMessage);
+                sendLogToChat("[" + LogType.ERROR + "] " + username + "[" + chatId + "] " + message);
+                break;
+        }
+    }
+
     private void sendLogToChat(String message) {
         try {
             TELEGRAM_BOT.execute(

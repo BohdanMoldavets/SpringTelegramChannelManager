@@ -4,6 +4,7 @@ import com.moldavets.SpringTelegramChannelManager.dao.AppDAO;
 import com.moldavets.SpringTelegramChannelManager.service.command.Command;
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
+import com.moldavets.SpringTelegramChannelManager.utils.log.LogType;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 public class CommandDoesNotExist implements Command {
@@ -14,5 +15,10 @@ public class CommandDoesNotExist implements Command {
                         AppDAO appDAO, Keyboard keyboard) {
 
         messageSender.sendMessage(String.valueOf(message.getChatId()), "Command does not exist");
+
+        messageSender.sendLog(String.valueOf(message.getChatId()),
+                              message.getFrom().getUserName(),
+                              "<- Bot: Command does not exist",
+                              LogType.ERROR);
     }
 }

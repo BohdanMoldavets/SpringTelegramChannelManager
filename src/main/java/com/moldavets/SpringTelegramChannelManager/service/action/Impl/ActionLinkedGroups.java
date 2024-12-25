@@ -18,11 +18,13 @@ public class ActionLinkedGroups implements Action {
                         MessageSender messageSender,
                         AppDAO appDAO, Keyboard keyboard) {
 
+        boolean isHaveLinkedGroups = false;
         StringBuilder stringBuilder = new StringBuilder();
 
         List<LinkedGroup> linkedGroups = appDAO.findById(callbackQuery.getMessage().getChatId()).getLinkedGroups();
 
         if (linkedGroups != null && !linkedGroups.isEmpty()) {
+            isHaveLinkedGroups = true;
             stringBuilder.append("Your linked groups:\n");
             for(LinkedGroup tempLinkedGroup : linkedGroups) {
                 stringBuilder
@@ -42,7 +44,11 @@ public class ActionLinkedGroups implements Action {
 
         List<String> buttonRowForLinkedGroupsMenu = new ArrayList<>();
         buttonRowForLinkedGroupsMenu.add("Add linked group");
-        buttonRowForLinkedGroupsMenu.add("Delete linked group");
+
+        if(isHaveLinkedGroups) {
+            buttonRowForLinkedGroupsMenu.add("Delete linked group");
+        }
+
         buttonsMenuForLinkedGroupsMenu.add(buttonRowForLinkedGroupsMenu);
 
         buttonRowForLinkedGroupsMenu = new ArrayList<>();

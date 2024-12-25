@@ -7,7 +7,6 @@ import com.moldavets.SpringTelegramChannelManager.service.command.Command;
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
 import com.moldavets.SpringTelegramChannelManager.utils.log.LogType;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -28,7 +27,10 @@ public class CommandStart implements Command {
             tempUser.setRole(new Role("ROLE_USER"));
 
             appDAO.save(tempUser);
-            //messageSender.sendLog(update, "has been registered", LogType.INFO);
+            messageSender.sendLog(String.valueOf(message.getChatId()),
+                                  message.getFrom().getUserName(),
+                                  "has been registered",
+                                  LogType.INFO);
         }
         messageSender.executeCustomMessage(keyboard.getMainMenu(chatId));
 

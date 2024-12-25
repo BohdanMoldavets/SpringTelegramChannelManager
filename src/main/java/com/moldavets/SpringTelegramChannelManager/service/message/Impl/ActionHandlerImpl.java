@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,13 +65,20 @@ public class ActionHandlerImpl implements ActionHandler {
     @Override
     public void handleAction(CallbackQuery callbackQuery) {
         lastAction = callbackQuery.getData();
-        //MESSAGE_SENDER.sendLog(update,"Inside block " + callbackQuery.getData(), LogType.INFO);
+        MESSAGE_SENDER.sendLog(String.valueOf(callbackQuery.getMessage().getChatId()),
+                               callbackQuery.getFrom().getUserName(),
+                               "Inside block " + callbackQuery.getData(),
+                               LogType.INFO);
 
         actions.get(callbackQuery.getData()).execute(callbackQuery,MESSAGE_SENDER,APP_DAO,KEYBOARD);
     }
 
     @Override
     public void handleCommand(Message message) {
+        MESSAGE_SENDER.sendLog(String.valueOf(message.getChatId()),
+                               message.getFrom().getUserName(),
+                               message.getText(),
+                               LogType.INFO);
 
         if(commands.containsKey(message.getText())) {
             commands.get(message.getText()).execute(message,MESSAGE_SENDER,APP_DAO,KEYBOARD);
