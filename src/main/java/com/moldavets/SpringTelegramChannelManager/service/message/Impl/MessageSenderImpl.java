@@ -58,6 +58,7 @@ public class MessageSenderImpl implements MessageSender {
             TELEGRAM_BOT.execute(message);
         } catch (TelegramApiException e) {
             log.error(e.getMessage());
+            throw new RuntimeException("Executing exception", e);
         }
     }
 

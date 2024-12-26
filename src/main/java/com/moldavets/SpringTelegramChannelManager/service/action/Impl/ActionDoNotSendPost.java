@@ -6,34 +6,21 @@ import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
 import com.moldavets.SpringTelegramChannelManager.utils.message.MessageUtils;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Component("SEND_POSTS")
-public class ActionSendPosts implements Action {
+@Component("DO_NOT_SEND_POST❌")
+public class ActionDoNotSendPost implements Action {
 
     @Override
     public void execute(CallbackQuery callbackQuery,
                         MessageSender messageSender,
                         AppDAO appDAO, Keyboard keyboard) {
 
-        String SendPostsText = "Enter the text that will be sent to your all groups";
-        EditMessageText answerForSendPostsMenu = MessageUtils.buildAnswer(SendPostsText,callbackQuery);
 
-        //creating buttons menu
-        List<List<String>> buttonsMenuForSendPostsMenu = new ArrayList<>();
-
-        List<String> buttonRowForSendPostsMenu = new ArrayList<>();
-        buttonRowForSendPostsMenu.add("Menu");
-
-        buttonsMenuForSendPostsMenu.add(buttonRowForSendPostsMenu);
-
-        answerForSendPostsMenu.setReplyMarkup(keyboard.createButtonMenu(buttonsMenuForSendPostsMenu));
-        messageSender.executeEditMessage(answerForSendPostsMenu);
-
+        messageSender.executeDeleteMessage(MessageUtils.buildDeleteMessage(callbackQuery));
+        messageSender.executeCustomMessage(keyboard.getMainMenu(callbackQuery.getMessage().getChatId()));
     }
 
 }

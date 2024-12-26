@@ -4,9 +4,11 @@ import com.moldavets.SpringTelegramChannelManager.dao.AppDAO;
 import com.moldavets.SpringTelegramChannelManager.service.action.Action;
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
+@Component("MENU")
 public class ActionMenu implements Action {
 
     @Override

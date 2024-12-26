@@ -4,12 +4,15 @@ import com.moldavets.SpringTelegramChannelManager.dao.AppDAO;
 import com.moldavets.SpringTelegramChannelManager.entity.Role;
 import com.moldavets.SpringTelegramChannelManager.entity.User;
 import com.moldavets.SpringTelegramChannelManager.service.command.Command;
+import com.moldavets.SpringTelegramChannelManager.service.message.Impl.ActionHandlerImpl;
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
 import com.moldavets.SpringTelegramChannelManager.utils.log.LogType;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
+@Component("/start")
 public class CommandStart implements Command {
 
     @Override
@@ -34,6 +37,6 @@ public class CommandStart implements Command {
         }
         messageSender.executeCustomMessage(keyboard.getMainMenu(chatId));
 
+        ActionHandlerImpl.lastAction = "MENU";
     }
-
 }

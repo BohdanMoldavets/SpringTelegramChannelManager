@@ -5,12 +5,14 @@ import com.moldavets.SpringTelegramChannelManager.service.action.Action;
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
 import com.moldavets.SpringTelegramChannelManager.utils.message.MessageUtils;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component("DELETE_LINKED_GROUP")
 public class ActionDeleteLinkedGroup implements Action {
 
     @Override
