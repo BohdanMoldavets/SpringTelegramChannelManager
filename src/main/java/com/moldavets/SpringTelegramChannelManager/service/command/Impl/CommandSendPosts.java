@@ -2,6 +2,7 @@ package com.moldavets.SpringTelegramChannelManager.service.command.Impl;
 
 import com.moldavets.SpringTelegramChannelManager.dao.AppDAO;
 import com.moldavets.SpringTelegramChannelManager.service.command.Command;
+import com.moldavets.SpringTelegramChannelManager.service.message.Impl.ActionHandlerImpl;
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
 import com.moldavets.SpringTelegramChannelManager.utils.log.LogType;
@@ -45,7 +46,7 @@ public class CommandSendPosts implements Command {
 
         messageSender.executeCustomMessage(response);
 
-
+        ActionHandlerImpl.lastAction = "MENU";
         messageSender.sendLog(String.valueOf(message.getChatId()),
                               message.getFrom().getUserName(),
                               response.getText(),

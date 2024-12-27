@@ -7,6 +7,7 @@ import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
 import com.moldavets.SpringTelegramChannelManager.utils.message.MessageUtils;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Component("LINKED_GROUPS")
 public class ActionLinkedGroups implements Action {
+
     @Override
     public void execute(CallbackQuery callbackQuery,
                         MessageSender messageSender,
@@ -31,7 +33,7 @@ public class ActionLinkedGroups implements Action {
             for(LinkedGroup tempLinkedGroup : linkedGroups) {
                 stringBuilder
                         .append("\t")
-                        .append(tempLinkedGroup.getGroupId())
+                        .append(String.format("<code>%s</code>",tempLinkedGroup.getGroupId()))
                         .append("\n");
             }
         } else {
@@ -40,6 +42,7 @@ public class ActionLinkedGroups implements Action {
         }
 
         EditMessageText answerForLinkedGroupsMenu = MessageUtils.buildAnswer(stringBuilder.toString(),callbackQuery);
+        answerForLinkedGroupsMenu.setParseMode(ParseMode.HTML);
 
         //creating buttons menu
         List<List<String>> buttonsMenuForLinkedGroupsMenu = new ArrayList<>();
