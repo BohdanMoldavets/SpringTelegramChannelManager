@@ -9,6 +9,7 @@ import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
 import com.moldavets.SpringTelegramChannelManager.utils.log.LogType;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -66,5 +67,20 @@ public class ActionHandlerImpl implements ActionHandler {
             COMMAND_FACTORY.getCommand("COMMAND_DOES_NOT_EXIST")
                            .execute(message,MESSAGE_SENDER,APP_DAO,KEYBOARD);
         }
+    }
+
+    @Override
+    public void handleOther(Message message) {
+        SendMessage doNotSupport = new SendMessage();
+        doNotSupport.setChatId(message.getChatId());
+        doNotSupport.setReplyToMessageId(message.getMessageId());
+        doNotSupport.setText("❌This message is not supported now❌");
+        MESSAGE_SENDER.executeCustomMessage(doNotSupport);
+
+        MESSAGE_SENDER.sendLog(String.valueOf(message.getChatId()),
+                message.getFrom().getUserName(),
+                "<- Bot: ❌This message is not supported now❌",
+                LogType.ERROR
+        );
     }
 }
