@@ -5,6 +5,7 @@ import com.moldavets.SpringTelegramChannelManager.entity.LinkedGroup;
 import com.moldavets.SpringTelegramChannelManager.service.action.Action;
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
+import com.moldavets.SpringTelegramChannelManager.utils.log.LogType;
 import com.moldavets.SpringTelegramChannelManager.utils.message.MessageUtils;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -38,6 +39,7 @@ public class ActionSendThisPost implements Action {
 
             post.setChatId(linkedGroupId);
             post.setText(MessageUtils.message.getText());
+            post.setParseMode("HTML");
 
             try {
                 messageSender.executeCustomMessage(post);
@@ -52,10 +54,23 @@ public class ActionSendThisPost implements Action {
             response.setParseMode("HTML");
 
             messageSender.executeCustomMessage(response);
+
+            messageSender.sendLog(String.valueOf(callbackQuery.getMessage().getChatId()),
+                                                 callbackQuery.getFrom().getUserName(),
+                                         "<- Bot: ✅ Sent to group with id " + linkedGroupId,
+                                                 LogType.ERROR
+            );
+
             } else {
             response.setText("❌ Error sending to group with id " + linkedGroupId);
 
             messageSender.executeCustomMessage(response);
+
+            messageSender.sendLog(String.valueOf(callbackQuery.getMessage().getChatId()),
+                                                 callbackQuery.getFrom().getUserName(),
+                                                 "<- Bot: ❌ Error sending to group with id " + linkedGroupId,
+                                                 LogType.ERROR
+            );
             }
 
         }

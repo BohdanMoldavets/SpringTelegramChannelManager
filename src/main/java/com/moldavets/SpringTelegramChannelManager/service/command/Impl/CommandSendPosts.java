@@ -4,6 +4,7 @@ import com.moldavets.SpringTelegramChannelManager.dao.AppDAO;
 import com.moldavets.SpringTelegramChannelManager.service.command.Command;
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
+import com.moldavets.SpringTelegramChannelManager.utils.log.LogType;
 import com.moldavets.SpringTelegramChannelManager.utils.message.MessageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,12 +22,6 @@ public class CommandSendPosts implements Command {
     @Override
     public void execute(Message message, MessageSender messageSender,
                         AppDAO appDAO, Keyboard keyboard) {
-
-//        List<String> linkedGroupsId =
-//                appDAO.findById(message.getChatId()).getLinkedGroups().stream()
-//                .map(LinkedGroup::getGroupId)
-//                .map(Object::toString)
-//                .toList();
 
         SendMessage response = new SendMessage();
         response.setChatId(message.getChatId());
@@ -50,36 +45,12 @@ public class CommandSendPosts implements Command {
 
         messageSender.executeCustomMessage(response);
 
-        //sending
-//        for(String linkedGroupId : linkedGroupsId) {
-//
-//            boolean isSent = true;
-//
-//            SendMessage answer = new SendMessage();
-//            SendMessage post = new SendMessage();
-//
-//            post.setChatId(linkedGroupId);
-//            post.setText(message.getText());
-//
-//            try {
-//                messageSender.executeCustomMessage(post);
-//            } catch (Exception e) {
-//                isSent = false;
-//            }
-//
-//            answer.setChatId(message.getChatId());
-//            if(isSent) {
-//                answer.setText("<b>✅ Sent to group with id " + linkedGroupId + "</b>");
-//                answer.setParseMode("HTML");
-//
-//                messageSender.executeCustomMessage(answer);
-//            } else {
-//                answer.setText("❌ Error sending to group with id " + linkedGroupId);
-//
-//                messageSender.executeCustomMessage(answer);
-//            }
-//
-//        }
+
+        messageSender.sendLog(String.valueOf(message.getChatId()),
+                              message.getFrom().getUserName(),
+                              response.getText(),
+                              LogType.INFO
+        );
     }
 
 }

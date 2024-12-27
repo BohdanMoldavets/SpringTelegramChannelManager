@@ -20,7 +20,18 @@ public class ActionSendPosts implements Action {
                         MessageSender messageSender,
                         AppDAO appDAO, Keyboard keyboard) {
 
-        String SendPostsText = "Enter the text that will be sent to your all groups";
+        String SendPostsText = """
+                ⬇️Use these styles to decorate your text⬇️
+                <b>bold</b>
+                <i>Italics</i>
+                <code>code</code>
+                <s>crossed-out</s>
+                <u>underlined</u>
+                <pre language="c++">code</pre>
+                <a href="your_link">Link</a>
+                
+                Enter the text that will be sent to your all groups
+                """;
         EditMessageText answerForSendPostsMenu = MessageUtils.buildAnswer(SendPostsText,callbackQuery);
 
         //creating buttons menu
