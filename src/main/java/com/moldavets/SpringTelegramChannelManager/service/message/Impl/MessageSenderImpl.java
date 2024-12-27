@@ -9,6 +9,7 @@ import org.jvnet.hk2.annotations.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -58,6 +59,7 @@ public class MessageSenderImpl implements MessageSender {
             TELEGRAM_BOT.execute(message);
         } catch (TelegramApiException e) {
             log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage().substring(e.getMessage().indexOf(":")+1));
         }
     }
 
@@ -72,6 +74,15 @@ public class MessageSenderImpl implements MessageSender {
 
     @Override
     public void executeDeleteMessage(DeleteMessage message) {
+        try {
+            TELEGRAM_BOT.execute(message);
+        } catch (TelegramApiException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public void executePhotoMessage(SendPhoto message) {
         try {
             TELEGRAM_BOT.execute(message);
         } catch (TelegramApiException e) {

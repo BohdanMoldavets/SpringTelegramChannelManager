@@ -37,8 +37,12 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if(update.hasMessage() && update.getMessage().hasText()) {
-            ACTION_HANDLER.handleCommand(update.getMessage());
+        if(update.hasMessage()) {
+            if(update.getMessage().hasText()) {
+                ACTION_HANDLER.handleCommand(update.getMessage());
+            } else {
+                ACTION_HANDLER.handleOther(update.getMessage());
+            }
         } else if(update.hasCallbackQuery()) {
             ACTION_HANDLER.handleAction(update.getCallbackQuery());
         }

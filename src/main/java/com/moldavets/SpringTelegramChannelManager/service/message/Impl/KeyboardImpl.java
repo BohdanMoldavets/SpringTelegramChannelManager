@@ -17,7 +17,7 @@ public class KeyboardImpl implements Keyboard {
 
     @Override
     public SendMessage getMainMenu(long chatId) {
-        setDetailsForChat(chatId, EmojiParser.parseToUnicode("Welcome to main menu :blush:"));
+        setDetailsForChat(chatId, "✨Welcome to main menu✨");
 
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsLine = new ArrayList<>();

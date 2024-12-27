@@ -1,25 +1,18 @@
 package com.moldavets.SpringTelegramChannelManager.service.message.Impl;
 
 import com.moldavets.SpringTelegramChannelManager.dao.AppDAO;
-import com.moldavets.SpringTelegramChannelManager.service.action.Action;
-import com.moldavets.SpringTelegramChannelManager.service.action.Impl.*;
-import com.moldavets.SpringTelegramChannelManager.service.command.Command;
-import com.moldavets.SpringTelegramChannelManager.service.command.Impl.CommandAddLinkedGroup;
-import com.moldavets.SpringTelegramChannelManager.service.command.Impl.CommandDeleteLinkedGroup;
-import com.moldavets.SpringTelegramChannelManager.service.command.Impl.CommandDoesNotExist;
-import com.moldavets.SpringTelegramChannelManager.service.command.Impl.CommandStart;
+import com.moldavets.SpringTelegramChannelManager.service.factory.ActionFactory;
+import com.moldavets.SpringTelegramChannelManager.service.factory.CommandFactory;
 import com.moldavets.SpringTelegramChannelManager.service.message.ActionHandler;
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
 import com.moldavets.SpringTelegramChannelManager.utils.log.LogType;
-import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
-import java.util.HashMap;
-import java.util.Map;
 
 
 @Component
@@ -28,38 +21,20 @@ public class ActionHandlerImpl implements ActionHandler {
     private final MessageSender MESSAGE_SENDER;
     private final Keyboard KEYBOARD;
     private final AppDAO APP_DAO;
+    private final ActionFactory ACTION_FACTORY;
+    private final CommandFactory COMMAND_FACTORY;
 
-    private final Map<String,Action> actions = new HashMap<>();
-    private final Map<String, Command> commands = new HashMap<>();
+    public static String lastAction;
 
-    private String lastAction;
-
-
-    @PostConstruct
-    public void InitActions() {
-        actions.put("MENU", new ActionMenu());
-        actions.put("MY_PROFILE", new ActionMyProfile());
-        actions.put("LINKED_GROUPS", new ActionLinkedGroups());
-        actions.put("SEND_POSTS", new ActionSendPosts());
-        actions.put("BUY_SUBSCRIPTION", new ActionBuySubscription());
-        actions.put("ADD_LINKED_GROUP", new ActionAddLinkedGroup());
-        actions.put("DELETE_LINKED_GROUP", new ActionDeleteLinkedGroup());
-    }
-
-    @PostConstruct
-    public void InitCommands() {
-        commands.put("/start", new CommandStart());
-        commands.put("ADD_LINKED_GROUP", new CommandAddLinkedGroup());
-        commands.put("DELETE_LINKED_GROUP", new CommandDeleteLinkedGroup());
-
-        commands.put("COMMAND_DOES_NOT_EXIST", new CommandDoesNotExist());
-    }
 
     public ActionHandlerImpl(@Lazy MessageSender messageSender, Keyboard keyboard,
-                             AppDAO appDAO) {
+                             AppDAO appDAO, ActionFactory actionFactory,
+                             CommandFactory commandFactory) {
         this.MESSAGE_SENDER = messageSender;
         this.KEYBOARD = keyboard;
         this.APP_DAO = appDAO;
+        this.ACTION_FACTORY = actionFactory;
+        this.COMMAND_FACTORY = commandFactory;
     }
 
     @Override
@@ -70,7 +45,8 @@ public class ActionHandlerImpl implements ActionHandler {
                                "Inside block " + callbackQuery.getData(),
                                LogType.INFO);
 
-        actions.get(callbackQuery.getData()).execute(callbackQuery,MESSAGE_SENDER,APP_DAO,KEYBOARD);
+        ACTION_FACTORY.getAction(callbackQuery.getData())
+                .execute(callbackQuery,MESSAGE_SENDER,APP_DAO,KEYBOARD);
     }
 
     @Override
@@ -80,12 +56,31 @@ public class ActionHandlerImpl implements ActionHandler {
                                message.getText(),
                                LogType.INFO);
 
-        if(commands.containsKey(message.getText())) {
-            commands.get(message.getText()).execute(message,MESSAGE_SENDER,APP_DAO,KEYBOARD);
-        } else if (commands.containsKey(lastAction)) {
-            commands.get(lastAction).execute(message,MESSAGE_SENDER,APP_DAO,KEYBOARD);
+
+        if(COMMAND_FACTORY.containsCommand(message.getText())) {
+            COMMAND_FACTORY.getCommand(message.getText())
+                           .execute(message,MESSAGE_SENDER,APP_DAO,KEYBOARD);
+        } else if (COMMAND_FACTORY.containsCommand("COMMAND_"+lastAction)) {
+            COMMAND_FACTORY.getCommand("COMMAND_"+lastAction)
+                           .execute(message,MESSAGE_SENDER,APP_DAO,KEYBOARD);
         } else {
-            commands.get("COMMAND_DOES_NOT_EXIST").execute(message,MESSAGE_SENDER,APP_DAO,KEYBOARD);
+            COMMAND_FACTORY.getCommand("COMMAND_DOES_NOT_EXIST")
+                           .execute(message,MESSAGE_SENDER,APP_DAO,KEYBOARD);
         }
+    }
+
+    @Override
+    public void handleOther(Message message) {
+        SendMessage doNotSupport = new SendMessage();
+        doNotSupport.setChatId(message.getChatId());
+        doNotSupport.setReplyToMessageId(message.getMessageId());
+        doNotSupport.setText("❌This message is not supported now❌");
+        MESSAGE_SENDER.executeCustomMessage(doNotSupport);
+
+        MESSAGE_SENDER.sendLog(String.valueOf(message.getChatId()),
+                message.getFrom().getUserName(),
+                "<- Bot: ❌This message is not supported now❌",
+                LogType.ERROR
+        );
     }
 }
