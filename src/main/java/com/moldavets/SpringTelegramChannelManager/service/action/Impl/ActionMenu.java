@@ -31,7 +31,7 @@ public class ActionMenu implements Action {
             security.setChatId(callbackQuery.getMessage().getChatId());
             security.enableHtml(true);
 
-            security.setText("<b>Your subscription is expired!</b>");
+            security.setText("<b>⛔Your subscription is expired!⛔</b>");
 
             messageSender.executeCustomMessage(security);
         }

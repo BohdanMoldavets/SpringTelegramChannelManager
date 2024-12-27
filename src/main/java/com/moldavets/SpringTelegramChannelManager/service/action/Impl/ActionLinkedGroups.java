@@ -29,16 +29,16 @@ public class ActionLinkedGroups implements Action {
 
         if (linkedGroups != null && !linkedGroups.isEmpty()) {
             isHaveLinkedGroups = true;
-            stringBuilder.append("Your linked groups:\n");
+            stringBuilder.append("☰Your linked groups:\n");
             for(LinkedGroup tempLinkedGroup : linkedGroups) {
                 stringBuilder
                         .append("\t")
-                        .append(String.format("<code>%s</code>",tempLinkedGroup.getGroupId()))
+                        .append(String.format("\uD83D\uDCE9<code>%s</code>",tempLinkedGroup.getGroupId()))
                         .append("\n");
             }
         } else {
             stringBuilder
-                    .append("You don't have any linked group.");
+                    .append("⚠You don't have any linked group.⚠");
         }
 
         EditMessageText answerForLinkedGroupsMenu = MessageUtils.buildAnswer(stringBuilder.toString(),callbackQuery);

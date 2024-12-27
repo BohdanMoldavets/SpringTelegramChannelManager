@@ -39,7 +39,7 @@ public class ActionMyProfile implements Action {
             security.setChatId(callbackQuery.getMessage().getChatId());
             security.enableHtml(true);
 
-            security.setText("<b>Your subscription is expired!</b>");
+            security.setText("<b>\uD83D\uDD34Your subscription is expired!\uD83D\uDD34</b>");
 
             messageSender.executeCustomMessage(security);
         }
@@ -47,13 +47,13 @@ public class ActionMyProfile implements Action {
         StringBuilder MyProfileText = new StringBuilder();
         Subscription subscription = appDAO.findById(callbackQuery.getMessage().getChatId()).getSubscription();
         MyProfileText.append("My Profile:\n")
-                .append("\t Username: ")
+                .append("\t ╭Username: ")
                 .append(appDAO.findById(callbackQuery.getMessage().getChatId()).getUsername())
                 .append("\n")
-                .append("\t User ID: ")
+                .append("\t ├User ID: ")
                 .append(callbackQuery.getMessage().getChatId())
                 .append("\n")
-                .append("\t Subscription: ");
+                .append("\t ╰Subscription: ");
 
         if(subscription != null) {
             if(subscription.getStatus()) {
@@ -64,7 +64,7 @@ public class ActionMyProfile implements Action {
                         .append("-")
                         .append(subscription.getEndDate().getDayOfMonth())
                         .append("\n")
-                        .append("\t Subscription purchases: ")
+                        .append("\t \uD83D\uDCCDSubscription purchases: ")
                         .append(subscription.getPurchaseCount());
             } else {
                 MyProfileText.append("Not subscribed");

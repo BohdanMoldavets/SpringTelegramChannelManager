@@ -20,10 +20,10 @@ public class ActionDeleteLinkedGroup implements Action {
                         MessageSender messageSender,
                         AppDAO appDAO, Keyboard keyboard) {
 
-        String DeleteLinkedGroupText = "Enter the group ID from previous page, " +
+        String DeleteLinkedGroupText = "⬇️Enter the group ID from previous page, " +
                 "that will be deleted, " +
                 "using this format:\n" +
-                "1234567890";
+                "-1234567890⬇️";
         EditMessageText answerForDeleteLinkedGroupMenu = MessageUtils.buildAnswer(DeleteLinkedGroupText,callbackQuery);
 
         List<List<String>> buttonsForDeleteLinkedGroupMenu = new ArrayList<>();

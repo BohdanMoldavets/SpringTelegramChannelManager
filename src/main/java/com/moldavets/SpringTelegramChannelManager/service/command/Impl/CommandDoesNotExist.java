@@ -16,7 +16,7 @@ public class CommandDoesNotExist implements Command {
                         MessageSender messageSender,
                         AppDAO appDAO, Keyboard keyboard) {
 
-        messageSender.sendMessage(String.valueOf(message.getChatId()), "Command does not exist");
+        messageSender.sendMessage(String.valueOf(message.getChatId()), "⚠Command does not exist⚠");
 
         messageSender.sendLog(String.valueOf(message.getChatId()),
                               message.getFrom().getUserName(),

@@ -52,7 +52,7 @@ public class CommandAddLinkedGroup implements Command {
 
 
                 answer.setChatId(message.getChatId());
-                answer.setText("You have successfully linked group " + groupId);
+                answer.setText("✅You have successfully linked group " + groupId);
 
                 messageSender.executeCustomMessage(answer);
                 messageSender.executeCustomMessage(keyboard.getMainMenu(message.getChatId()));
@@ -63,7 +63,7 @@ public class CommandAddLinkedGroup implements Command {
                         LogType.INFO );
             } else {
                 answer.setChatId(message.getChatId());
-                answer.setText("Selected group already linked to you " + groupId);
+                answer.setText("❌Selected group already linked to you " + groupId);
 
                 messageSender.executeCustomMessage(answer);
                 messageSender.executeCustomMessage(keyboard.getMainMenu(message.getChatId()));
@@ -76,7 +76,7 @@ public class CommandAddLinkedGroup implements Command {
 
         } else {
             answer.setChatId(message.getChatId());
-            answer.setText("Only numbers from 0 to 9 are allowed and " +
+            answer.setText("⚠ Only numbers from 0 to 9 are allowed and " +
                            "the first character of the Id group must be '-'.  Try again.");
 
             messageSender.executeCustomMessage(answer);

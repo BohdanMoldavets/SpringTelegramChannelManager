@@ -32,7 +32,7 @@ public class CommandSendPosts implements Command {
         messageSender.executeCustomMessage(response);
         MessageUtils.message = message;
 
-        response.setText("<b>Are you sure you want to send a post with this text?</b>");
+        response.setText("<b>\uD83D\uDCCCAre you sure you want to send a post with this text?\uD83D\uDCCC</b>");
 
         List<List<String>> buttons = new ArrayList<>();
 

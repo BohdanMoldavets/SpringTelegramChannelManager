@@ -33,6 +33,7 @@ public class ActionSendThisPost implements Action {
         for(String linkedGroupId : linkedGroupsId) {
 
             boolean isSent = true;
+            String error = "";
 
             SendMessage response = new SendMessage();
             SendMessage post = new SendMessage();
@@ -45,34 +46,32 @@ public class ActionSendThisPost implements Action {
                 messageSender.executeCustomMessage(post);
             } catch (Exception e) {
                 isSent = false;
+                error = e.getMessage();
             }
 
             response.setChatId(callbackQuery.getMessage().getChatId());
 
             if(isSent) {
             response.setText("<b>✅ Sent to group with id " + linkedGroupId + "</b>");
-            response.setParseMode("HTML");
 
-            messageSender.executeCustomMessage(response);
-
-            messageSender.sendLog(String.valueOf(callbackQuery.getMessage().getChatId()),
+                messageSender.sendLog(String.valueOf(callbackQuery.getMessage().getChatId()),
                                                  callbackQuery.getFrom().getUserName(),
                                          "<- Bot: ✅ Sent to group with id " + linkedGroupId,
-                                                 LogType.ERROR
+                                                 LogType.INFO
             );
 
             } else {
-            response.setText("❌ Error sending to group with id " + linkedGroupId);
+                response.setText("❌ Error sending to group with id " + linkedGroupId + "\n <i>" + error + "</i>");
 
-            messageSender.executeCustomMessage(response);
-
-            messageSender.sendLog(String.valueOf(callbackQuery.getMessage().getChatId()),
+                messageSender.sendLog(String.valueOf(callbackQuery.getMessage().getChatId()),
                                                  callbackQuery.getFrom().getUserName(),
-                                                 "<- Bot: ❌ Error sending to group with id " + linkedGroupId,
+                                                 "<- Bot: ❌ Error sending to group with id " + linkedGroupId + "\n[400] Bad Request: chat not found",
                                                  LogType.ERROR
             );
             }
+            response.setParseMode("HTML");
 
+            messageSender.executeCustomMessage(response);
         }
         messageSender.executeCustomMessage(keyboard.getMainMenu(callbackQuery.getMessage().getChatId()));
     }

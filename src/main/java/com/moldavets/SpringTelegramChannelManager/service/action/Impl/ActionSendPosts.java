@@ -48,10 +48,10 @@ public class ActionSendPosts implements Action {
                     <pre language="c++">code</pre>
                     <a href="your_link">Link</a>
                     
-                    Enter the text that will be sent to your all groups
+                    ⬇️Enter the text that will be sent to your all groups⬇️
                     """;
             } else {
-                SendPostsText = "You don't have any linked group.";
+                SendPostsText = "⚠You don't have any linked group.⚠";
                 ActionHandlerImpl.lastAction = "MENU";
             }
         } else {
