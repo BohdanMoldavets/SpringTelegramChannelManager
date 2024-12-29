@@ -71,26 +71,26 @@ public class ActionMyProfile implements Action {
             }
         }
 
-        EditMessageText answerForMyProfileMenu = MessageUtils.buildAnswer(MyProfileText.toString(),callbackQuery);
+        EditMessageText answer = MessageUtils.buildAnswer(MyProfileText.toString(),callbackQuery);
 
         //creating buttons menu
 
-        List<List<String>> buttonsMenuForMyProfileMenu = new ArrayList<>();
+        List<List<String>> buttons = new ArrayList<>();
 
-        List<String> buttonRowForMyProfileMenu = new ArrayList<>();
+        List<String> buttonRow = new ArrayList<>();
         if (subscription != null) {
             if (!subscription.getStatus()) {
-                buttonRowForMyProfileMenu.add("Buy subscription");
-                buttonsMenuForMyProfileMenu.add(buttonRowForMyProfileMenu);
-                buttonRowForMyProfileMenu = new ArrayList<>();
+                buttonRow.add("Buy subscription");
+                buttons.add(buttonRow);
+                buttonRow = new ArrayList<>();
             }
         }
 
-        buttonRowForMyProfileMenu.add("Menu");
-        buttonsMenuForMyProfileMenu.add(buttonRowForMyProfileMenu);
+        buttonRow.add("Menu");
+        buttons.add(buttonRow);
 
-        answerForMyProfileMenu.setReplyMarkup(keyboard.createButtonMenu(buttonsMenuForMyProfileMenu));
-        messageSender.executeEditMessage(answerForMyProfileMenu);
+        answer.setReplyMarkup(keyboard.createButtonMenu(buttons));
+        messageSender.executeEditMessage(answer);
 
     }
 }

@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jvnet.hk2.annotations.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -20,8 +21,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Service
 public class MessageSenderImpl implements MessageSender {
 
-    //@Value("${bot.log.chat.id}")
-    private final long LOG_CHAT_ID =-1002422084878L;
+    @Value("${bot.log.chat.id}")
+    private long LOG_CHAT_ID;
 
     private final TelegramBot TELEGRAM_BOT;
 

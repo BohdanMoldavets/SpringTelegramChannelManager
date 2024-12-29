@@ -3,6 +3,7 @@ package com.moldavets.SpringTelegramChannelManager.service.message.Impl;
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -17,25 +18,45 @@ public class KeyboardImpl implements Keyboard {
 
     @Override
     public SendMessage getMainMenu(long chatId) {
-        setDetailsForChat(chatId, "✨Welcome to main menu✨");
+        setDetailsForChat(chatId, """
+                <b>✨Welcome to main menu✨</b>
+                
+                <u><b>How to use this bot:</b></u>
+                    <b>📌 Link one or more groups</b>
+                    <i>Menu->Linked Groups->Add linked group</i>
+                    <b>📌 Buy subscription</b>
+                    <i>Menu->My Profile->Buy Subscription</i>
+                    <b>📌 Send posts to your channels</b>
+                    <i>Menu->Send posts</i>
+                """);
 
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rowsLine = new ArrayList<>();
-        List<InlineKeyboardButton> row = new ArrayList<>();
+        List<List<String>> buttons = new ArrayList<>();
+        List<String> buttonRow = new ArrayList<>();
 
-        row.add(createButton("Send Posts", "SEND_POSTS"));
-        row.add(createButton("Liked Groups", "LINKED_GROUPS"));
-        rowsLine.add(row);
+        buttonRow.add("Send Posts");
+        buttonRow.add("Linked Groups");
+        buttons.add(buttonRow);
 
-        row = new ArrayList<>();
-        row.add(createButton("My Profile", "MY_PROFILE"));
-        rowsLine.add(row);
+        buttonRow = new ArrayList<>();
+        buttonRow.add("My Profile");
 
-        inlineKeyboardMarkup.setKeyboard(rowsLine);
+        buttons.add(buttonRow);
 
-        MESSAGE_TO_BE_SENT.setReplyMarkup(inlineKeyboardMarkup);
+        MESSAGE_TO_BE_SENT.setParseMode(ParseMode.HTML);
+        MESSAGE_TO_BE_SENT.setReplyMarkup(createButtonMenu(buttons));
 
         return MESSAGE_TO_BE_SENT;
+    }
+
+    @Override
+    public InlineKeyboardMarkup getOnlyMenuButton() {
+        List<List<String>> buttons = new ArrayList<>();
+
+        List<String> buttonRow = new ArrayList<>();
+        buttonRow.add("Menu");
+
+        buttons.add(buttonRow);
+        return createButtonMenu(buttons);
     }
 
     @Override

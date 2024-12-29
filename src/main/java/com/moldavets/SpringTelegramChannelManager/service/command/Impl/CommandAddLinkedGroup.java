@@ -45,28 +45,38 @@ public class CommandAddLinkedGroup implements Command {
             }
 
             if(!isPresent) {
-                LinkedGroup linkedGroup = new LinkedGroup(groupId);
+                if(appDAO.findLinkedGroupById(groupId) == null) {
+                    LinkedGroup linkedGroup = new LinkedGroup(groupId);
 
-                currentUser.addLinkedGroup(linkedGroup);
-                appDAO.update(currentUser);
+                    currentUser.addLinkedGroup(linkedGroup);
+                    appDAO.update(currentUser);
 
+                    answer.setChatId(message.getChatId());
+                    answer.setText("✅You have successfully linked group " + groupId);
 
-                answer.setChatId(message.getChatId());
-                answer.setText("✅You have successfully linked group " + groupId);
+                    messageSender.executeCustomMessage(answer);
+                    //messageSender.executeCustomMessage(keyboard.getMainMenu(message.getChatId()));
 
-                messageSender.executeCustomMessage(answer);
-                messageSender.executeCustomMessage(keyboard.getMainMenu(message.getChatId()));
+                    messageSender.sendLog(String.valueOf(message.getChatId()),
+                            message.getFrom().getUserName(),
+                            "<- Bot: You have successfully linked group " + groupId,
+                            LogType.INFO );
+                } else {
+                    answer.setChatId(message.getChatId());
+                    answer.setText("❌This group already linked to other user ");
+                    messageSender.executeCustomMessage(answer);
 
-                messageSender.sendLog(String.valueOf(message.getChatId()),
-                        message.getFrom().getUserName(),
-                        "<- Bot: You have successfully linked group " + groupId,
-                        LogType.INFO );
+                    messageSender.sendLog(String.valueOf(message.getChatId()),
+                            message.getFrom().getUserName(),
+                            "<- Bot: This group already linked to other user " + groupId,
+                            LogType.ERROR);
+                }
             } else {
                 answer.setChatId(message.getChatId());
                 answer.setText("❌Selected group already linked to you " + groupId);
 
                 messageSender.executeCustomMessage(answer);
-                messageSender.executeCustomMessage(keyboard.getMainMenu(message.getChatId()));
+                //messageSender.executeCustomMessage(keyboard.getMainMenu(message.getChatId()));
 
                 messageSender.sendLog(String.valueOf(message.getChatId()),
                         message.getFrom().getUserName(),
@@ -80,7 +90,7 @@ public class CommandAddLinkedGroup implements Command {
                            "the first character of the Id group must be '-'.  Try again.");
 
             messageSender.executeCustomMessage(answer);
-            messageSender.executeCustomMessage(keyboard.getMainMenu(message.getChatId()));
+
 
             messageSender.sendLog(String.valueOf(message.getChatId()),
                                   message.getFrom().getUserName(),
@@ -88,6 +98,7 @@ public class CommandAddLinkedGroup implements Command {
                                   "the first character of the Id group must be '-'.  Try again.",
                                   LogType.ERROR);
         }
+        messageSender.executeCustomMessage(keyboard.getMainMenu(message.getChatId()));
         ActionHandlerImpl.lastAction = "MENU";
     }
 }

@@ -24,16 +24,11 @@ public class ActionDeleteLinkedGroup implements Action {
                 "that will be deleted, " +
                 "using this format:\n" +
                 "-1234567890⬇️";
-        EditMessageText answerForDeleteLinkedGroupMenu = MessageUtils.buildAnswer(DeleteLinkedGroupText,callbackQuery);
+        EditMessageText answer = MessageUtils.buildAnswer(DeleteLinkedGroupText,callbackQuery);
 
-        List<List<String>> buttonsForDeleteLinkedGroupMenu = new ArrayList<>();
 
-        List<String> buttonRowForDeleteLinkedGroupMenu = new ArrayList<>();
-        buttonRowForDeleteLinkedGroupMenu.add("Menu");
-        buttonsForDeleteLinkedGroupMenu.add(buttonRowForDeleteLinkedGroupMenu);
-
-        answerForDeleteLinkedGroupMenu.setReplyMarkup(keyboard.createButtonMenu(buttonsForDeleteLinkedGroupMenu));
-        messageSender.executeEditMessage(answerForDeleteLinkedGroupMenu);
+        answer.setReplyMarkup(keyboard.getOnlyMenuButton());
+        messageSender.executeEditMessage(answer);
 
     }
 

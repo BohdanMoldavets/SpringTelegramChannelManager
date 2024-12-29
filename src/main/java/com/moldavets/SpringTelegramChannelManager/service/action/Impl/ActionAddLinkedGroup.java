@@ -23,16 +23,11 @@ public class ActionAddLinkedGroup implements Action {
         String AddLinkedGroupText = "⬇️Enter the group ID that will be linked to you, using this format: " +
                 "-1234567890⬇️";
 
-        EditMessageText answerForAddLinkedGroupMenu = MessageUtils.buildAnswer(AddLinkedGroupText,callbackQuery);
+        EditMessageText answer = MessageUtils.buildAnswer(AddLinkedGroupText,callbackQuery);
 
-        List<List<String>> buttonsForAddLinkedGroupMenu = new ArrayList<>();
 
-        List<String> buttonRowForAddLinkedGroupMenu = new ArrayList<>();
-        buttonRowForAddLinkedGroupMenu.add("Menu");
-        buttonsForAddLinkedGroupMenu.add(buttonRowForAddLinkedGroupMenu);
-
-        answerForAddLinkedGroupMenu.setReplyMarkup(keyboard.createButtonMenu(buttonsForAddLinkedGroupMenu));
-        messageSender.executeEditMessage(answerForAddLinkedGroupMenu);
+        answer.setReplyMarkup(keyboard.getOnlyMenuButton());
+        messageSender.executeEditMessage(answer);
 
     }
 

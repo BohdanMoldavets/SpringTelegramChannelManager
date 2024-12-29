@@ -6,6 +6,7 @@ import com.moldavets.SpringTelegramChannelManager.entity.Role;
 import com.moldavets.SpringTelegramChannelManager.entity.Subscription;
 import com.moldavets.SpringTelegramChannelManager.entity.User;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,5 +70,14 @@ public class AppDAOImpl implements AppDAO {
                 .executeUpdate();
     }
 
-
+    @Override
+    public LinkedGroup findLinkedGroupById(long id) {
+        try{
+            return ENTITY_MANAGER.createQuery("FROM LinkedGroup where groupId=:groupId", LinkedGroup.class)
+                    .setParameter("groupId",id)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }
