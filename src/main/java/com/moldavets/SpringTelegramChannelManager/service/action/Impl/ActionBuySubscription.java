@@ -24,7 +24,7 @@ public class ActionBuySubscription implements Action {
 
         String BuySubscriptionText = "Buying a subscription is not available right now as the bot is not commercial." +
                 " Congratulations you just got a monthly subscription for free!";
-        EditMessageText answerForBuySubscriptionMenu = MessageUtils.buildAnswer(BuySubscriptionText,callbackQuery);
+        EditMessageText answer = MessageUtils.buildAnswer(BuySubscriptionText,callbackQuery);
 
         User currentUser = appDAO.findById(callbackQuery.getMessage().getChatId());
         currentUser.getSubscription().addMonthlySubscription();
@@ -38,14 +38,9 @@ public class ActionBuySubscription implements Action {
 
 
         //creating buttons menu
-        List<List<String>> buttonsForBuySubscriptionMenu = new ArrayList<>();
 
-        List<String> buttonRowForBuySubscriptionMenu = new ArrayList<>();
-        buttonRowForBuySubscriptionMenu.add("Menu");
-        buttonsForBuySubscriptionMenu.add(buttonRowForBuySubscriptionMenu);
-
-        answerForBuySubscriptionMenu.setReplyMarkup(keyboard.createButtonMenu(buttonsForBuySubscriptionMenu));
-        messageSender.executeEditMessage(answerForBuySubscriptionMenu);
+        answer.setReplyMarkup(keyboard.getOnlyMenuButton());
+        messageSender.executeEditMessage(answer);
 
     }
 

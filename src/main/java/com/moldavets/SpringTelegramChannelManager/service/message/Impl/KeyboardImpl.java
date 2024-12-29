@@ -39,6 +39,17 @@ public class KeyboardImpl implements Keyboard {
     }
 
     @Override
+    public InlineKeyboardMarkup getOnlyMenuButton() {
+        List<List<String>> buttons = new ArrayList<>();
+
+        List<String> buttonRow = new ArrayList<>();
+        buttonRow.add("Menu");
+
+        buttons.add(buttonRow);
+        return createButtonMenu(buttons);
+    }
+
+    @Override
     public InlineKeyboardMarkup createButtonMenu(List<List<String>> buttons) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsLine = new ArrayList<>();

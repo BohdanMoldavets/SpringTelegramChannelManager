@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface Keyboard {
 
-    SendMessage getMainMenu(long chatId);
     InlineKeyboardMarkup createButtonMenu(List<List<String>> buttons);
+
+    SendMessage getMainMenu(long chatId);
+    InlineKeyboardMarkup getOnlyMenuButton();
 }

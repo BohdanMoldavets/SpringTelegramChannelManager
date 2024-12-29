@@ -41,27 +41,27 @@ public class ActionLinkedGroups implements Action {
                     .append("⚠You don't have any linked group.⚠");
         }
 
-        EditMessageText answerForLinkedGroupsMenu = MessageUtils.buildAnswer(stringBuilder.toString(),callbackQuery);
-        answerForLinkedGroupsMenu.setParseMode(ParseMode.HTML);
+        EditMessageText answer = MessageUtils.buildAnswer(stringBuilder.toString(),callbackQuery);
+        answer.setParseMode(ParseMode.HTML);
 
         //creating buttons menu
-        List<List<String>> buttonsMenuForLinkedGroupsMenu = new ArrayList<>();
+        List<List<String>> buttons = new ArrayList<>();
 
-        List<String> buttonRowForLinkedGroupsMenu = new ArrayList<>();
-        buttonRowForLinkedGroupsMenu.add("Add linked group");
+        List<String> buttonRow = new ArrayList<>();
+        buttonRow.add("Add linked group");
 
         if(isHaveLinkedGroups) {
-            buttonRowForLinkedGroupsMenu.add("Delete linked group");
+            buttonRow.add("Delete linked group");
         }
 
-        buttonsMenuForLinkedGroupsMenu.add(buttonRowForLinkedGroupsMenu);
+        buttons.add(buttonRow);
 
-        buttonRowForLinkedGroupsMenu = new ArrayList<>();
-        buttonRowForLinkedGroupsMenu.add("Menu");
-        buttonsMenuForLinkedGroupsMenu.add(buttonRowForLinkedGroupsMenu);
+        buttonRow = new ArrayList<>();
+        buttonRow.add("Menu");
+        buttons.add(buttonRow);
 
-        answerForLinkedGroupsMenu.setReplyMarkup(keyboard.createButtonMenu(buttonsMenuForLinkedGroupsMenu));
-        messageSender.executeEditMessage(answerForLinkedGroupsMenu);
+        answer.setReplyMarkup(keyboard.createButtonMenu(buttons));
+        messageSender.executeEditMessage(answer);
 
     }
 }

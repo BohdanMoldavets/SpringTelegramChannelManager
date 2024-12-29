@@ -67,15 +67,7 @@ public class ActionSendPosts implements Action {
 
         answer = MessageUtils.buildAnswer(SendPostsText,callbackQuery);
 
-        //creating buttons menu
-        List<List<String>> buttons = new ArrayList<>();
-
-        List<String> buttonRow = new ArrayList<>();
-        buttonRow.add("Menu");
-
-        buttons.add(buttonRow);
-
-        answer.setReplyMarkup(keyboard.createButtonMenu(buttons));
+        answer.setReplyMarkup(keyboard.getOnlyMenuButton());
         messageSender.executeEditMessage(answer);
 
         messageSender.sendLog(String.valueOf(callbackQuery.getMessage().getChatId()),
