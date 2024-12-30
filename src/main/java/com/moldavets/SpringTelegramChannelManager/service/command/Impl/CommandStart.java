@@ -30,8 +30,6 @@ public class CommandStart implements Command {
                         MessageSender messageSender,
                         AppDAO appDAO, Keyboard keyboard) {
 
-
-
         long chatId = message.getChatId();
         Chat chat = message.getChat();
         if(appDAO.findById(chatId) == null) {
@@ -41,7 +39,16 @@ public class CommandStart implements Command {
             tempUser.setUsername(chat.getUserName());
             tempUser.setRole(new Role("ROLE_USER"));
 
-            appDAO.save(tempUser);
+            try {
+                appDAO.save(tempUser);
+            } catch (Exception e) {
+                messageSender.sendLog(String.valueOf(message.getChatId()),
+                                      message.getFrom().getUserName(),
+                                      e.getMessage(),
+                                      LogType.ERROR
+                );
+            }
+
             messageSender.sendLog(String.valueOf(message.getChatId()),
                                   message.getFrom().getUserName(),
                                   "has been registered",
@@ -58,8 +65,19 @@ public class CommandStart implements Command {
 
             messageSender.executeCustomMessage(security);
         }
+
         messageSender.executeCustomMessage(keyboard.getMainMenu(chatId));
 
-        ActionHandlerImpl.lastAction = "MENU";
+        try {
+            User tempUser = appDAO.findById(message.getChatId());
+            tempUser.setLastAction("MENU");
+            appDAO.update(tempUser);
+        } catch (Exception e) {
+            messageSender.sendLog(String.valueOf(message.getChatId()),
+                    message.getFrom().getUserName(),
+                    e.getMessage(),
+                    LogType.ERROR
+            );
+        }
     }
 }

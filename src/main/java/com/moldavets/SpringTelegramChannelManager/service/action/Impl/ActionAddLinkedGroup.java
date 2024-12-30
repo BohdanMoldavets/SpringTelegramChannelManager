@@ -9,9 +9,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Component("ADD_LINKED_GROUP")
 public class ActionAddLinkedGroup implements Action {
 
@@ -24,9 +21,8 @@ public class ActionAddLinkedGroup implements Action {
                 "-1234567890⬇️";
 
         EditMessageText answer = MessageUtils.buildAnswer(AddLinkedGroupText,callbackQuery);
-
-
         answer.setReplyMarkup(keyboard.getOnlyMenuButton());
+        
         messageSender.executeEditMessage(answer);
 
     }

@@ -39,7 +39,18 @@ public class ActionSendThisPost implements Action {
             SendMessage post = new SendMessage();
 
             post.setChatId(linkedGroupId);
-            post.setText(MessageUtils.message.getText());
+
+            try {
+                String text = appDAO.findById(callbackQuery.getMessage().getChatId()).getLastMessage();
+                post.setText(text);
+            } catch (Exception e) {
+                messageSender.sendLog(String.valueOf(callbackQuery.getMessage().getChatId()),
+                                      callbackQuery.getFrom().getUserName(),
+                                      e.getMessage(),
+                                      LogType.ERROR
+                );
+            }
+
             post.setParseMode("HTML");
 
             try {

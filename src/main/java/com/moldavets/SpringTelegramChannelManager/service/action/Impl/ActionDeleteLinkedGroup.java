@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Component("DELETE_LINKED_GROUP")
 public class ActionDeleteLinkedGroup implements Action {

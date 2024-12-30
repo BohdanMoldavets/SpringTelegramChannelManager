@@ -32,19 +32,6 @@ public class MessageSenderImpl implements MessageSender {
     }
 
     @Override
-    public void sendMessage(Update update, String message) {
-        long chatId = update.hasMessage() && update.getMessage().hasText() ? update.getMessage().getChatId() : update.getCallbackQuery().getMessage().getChatId();
-        SendMessage answer = new SendMessage(String.valueOf(chatId),message);
-        try {
-            TELEGRAM_BOT.execute(answer);
-            sendLog(update, update.getMessage().getText(), LogType.INFO);
-            sendLog(update, "Response for previous message: " + message, LogType.INFO);
-        } catch (TelegramApiException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    @Override
     public void sendMessage(String chatId, String message) {
         SendMessage answer = new SendMessage(chatId,message);
         try {
@@ -79,41 +66,6 @@ public class MessageSenderImpl implements MessageSender {
             TELEGRAM_BOT.execute(message);
         } catch (TelegramApiException e) {
             log.error(e.getMessage());
-        }
-    }
-
-    @Override
-    public void executePhotoMessage(SendPhoto message) {
-        try {
-            TELEGRAM_BOT.execute(message);
-        } catch (TelegramApiException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    @Override
-    public void sendLog(Update update, String message, LogType logType) {
-        long chatId;
-        String username;
-        if(update.hasMessage() && update.getMessage().hasText()) {
-            chatId = update.getMessage().getChatId();
-            username = update.getMessage().getFrom().getUserName();
-        } else {
-            chatId = update.getCallbackQuery().getMessage().getChatId();
-            username = update.getCallbackQuery().getFrom().getUserName();
-        }
-
-
-        switch (logType) {
-            case INFO:
-                log.info(message);
-                sendLogToChat("[" + LogType.INFO + "] " + username + "[" + chatId + "] " + message);
-                break;
-
-            case ERROR:
-                log.error(message);
-                sendLogToChat("[" + LogType.ERROR + "] " + username + "[" + chatId + "] " + message);
-                break;
         }
     }
 

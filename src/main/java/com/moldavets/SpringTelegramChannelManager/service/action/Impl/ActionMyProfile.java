@@ -8,6 +8,7 @@ import com.moldavets.SpringTelegramChannelManager.service.action.Action;
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
 import com.moldavets.SpringTelegramChannelManager.service.security.Security;
+import com.moldavets.SpringTelegramChannelManager.utils.log.LogType;
 import com.moldavets.SpringTelegramChannelManager.utils.message.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,8 @@ public class ActionMyProfile implements Action {
                         MessageSender messageSender,
                         AppDAO appDAO, Keyboard keyboard) {
 
+        Subscription subscription = null;
+        String username = null;
 
         if(!SECURITY.isValidSubscription(appDAO,callbackQuery.getMessage().getChatId())) {
             SendMessage security = new SendMessage();
@@ -45,10 +48,23 @@ public class ActionMyProfile implements Action {
         }
 
         StringBuilder MyProfileText = new StringBuilder();
-        Subscription subscription = appDAO.findById(callbackQuery.getMessage().getChatId()).getSubscription();
+
+        //get subscription and username
+        try {
+            subscription = appDAO.findById(callbackQuery.getMessage().getChatId()).getSubscription();
+            username = appDAO.findById(callbackQuery.getMessage().getChatId()).getUsername();
+        } catch (Exception e) {
+            messageSender.sendLog(String.valueOf(callbackQuery.getMessage().getChatId()),
+                                  callbackQuery.getFrom().getUserName(),
+                                  e.getMessage(),
+                                  LogType.ERROR
+            );
+        }
+
+        //build the answer
         MyProfileText.append("My Profile:\n")
                 .append("\t ╭Username: ")
-                .append(appDAO.findById(callbackQuery.getMessage().getChatId()).getUsername())
+                .append(username)
                 .append("\n")
                 .append("\t ├User ID: ")
                 .append(callbackQuery.getMessage().getChatId())
@@ -74,7 +90,6 @@ public class ActionMyProfile implements Action {
         EditMessageText answer = MessageUtils.buildAnswer(MyProfileText.toString(),callbackQuery);
 
         //creating buttons menu
-
         List<List<String>> buttons = new ArrayList<>();
 
         List<String> buttonRow = new ArrayList<>();

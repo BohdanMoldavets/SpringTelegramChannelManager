@@ -1,12 +1,11 @@
 package com.moldavets.SpringTelegramChannelManager.service.command.Impl;
 
 import com.moldavets.SpringTelegramChannelManager.dao.AppDAO;
+import com.moldavets.SpringTelegramChannelManager.entity.User;
 import com.moldavets.SpringTelegramChannelManager.service.command.Command;
-import com.moldavets.SpringTelegramChannelManager.service.message.Impl.ActionHandlerImpl;
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
 import com.moldavets.SpringTelegramChannelManager.utils.log.LogType;
-import com.moldavets.SpringTelegramChannelManager.utils.message.MessageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -30,7 +29,19 @@ public class CommandSendPosts implements Command {
 
         response.setText(message.getText());
         messageSender.executeCustomMessage(response);
-        MessageUtils.message = message;
+
+        //save last message to db
+        try {
+            User tempUser = appDAO.findById(message.getChatId());
+            tempUser.setLastMessage(message.getText());
+            appDAO.update(tempUser);
+        } catch (Exception e) {
+            messageSender.sendLog(String.valueOf(message.getChatId()),
+                                  message.getFrom().getUserName(),
+                                  e.getMessage(),
+                                  LogType.ERROR
+            );
+        }
 
         response.setText("<b>\uD83D\uDCCCAre you sure you want to send a post with this text?\uD83D\uDCCC</b>");
 
@@ -46,7 +57,18 @@ public class CommandSendPosts implements Command {
 
         messageSender.executeCustomMessage(response);
 
-        ActionHandlerImpl.lastAction = "MENU";
+        try {
+            User tempUser = appDAO.findById(message.getChatId());
+            tempUser.setLastAction("MENU");
+            appDAO.update(tempUser);
+        } catch (Exception e) {
+            messageSender.sendLog(String.valueOf(message.getChatId()),
+                                  message.getFrom().getUserName(),
+                                  e.getMessage(),
+                                  LogType.ERROR
+            );
+        }
+
         messageSender.sendLog(String.valueOf(message.getChatId()),
                               message.getFrom().getUserName(),
                               response.getText(),

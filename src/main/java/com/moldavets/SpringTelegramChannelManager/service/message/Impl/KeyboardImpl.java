@@ -1,7 +1,6 @@
 package com.moldavets.SpringTelegramChannelManager.service.message.Impl;
 
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
-import com.vdurmont.emoji.EmojiParser;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
