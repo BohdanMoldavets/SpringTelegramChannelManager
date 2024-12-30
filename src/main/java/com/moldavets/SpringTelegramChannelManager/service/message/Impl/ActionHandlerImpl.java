@@ -1,6 +1,7 @@
 package com.moldavets.SpringTelegramChannelManager.service.message.Impl;
 
 import com.moldavets.SpringTelegramChannelManager.dao.AppDAO;
+import com.moldavets.SpringTelegramChannelManager.entity.User;
 import com.moldavets.SpringTelegramChannelManager.service.factory.ActionFactory;
 import com.moldavets.SpringTelegramChannelManager.service.factory.CommandFactory;
 import com.moldavets.SpringTelegramChannelManager.service.message.ActionHandler;
@@ -24,8 +25,6 @@ public class ActionHandlerImpl implements ActionHandler {
     private final ActionFactory ACTION_FACTORY;
     private final CommandFactory COMMAND_FACTORY;
 
-    public static String lastAction;
-
 
     public ActionHandlerImpl(@Lazy MessageSender messageSender, Keyboard keyboard,
                              AppDAO appDAO, ActionFactory actionFactory,
@@ -39,7 +38,20 @@ public class ActionHandlerImpl implements ActionHandler {
 
     @Override
     public void handleAction(CallbackQuery callbackQuery) {
-        lastAction = callbackQuery.getData();
+
+        //saving the last action
+        try {
+            User tempUser = APP_DAO.findById(callbackQuery.getMessage().getChatId());
+            tempUser.setLastAction(callbackQuery.getData());
+            APP_DAO.update(tempUser);
+        } catch (Exception e) {
+            MESSAGE_SENDER.sendLog(String.valueOf(callbackQuery.getMessage().getChatId()),
+                                   callbackQuery.getFrom().getUserName(),
+                                   e.getMessage(),
+                                   LogType.ERROR
+            );
+        }
+
         MESSAGE_SENDER.sendLog(String.valueOf(callbackQuery.getMessage().getChatId()),
                                callbackQuery.getFrom().getUserName(),
                                "Inside block " + callbackQuery.getData(),
@@ -60,8 +72,8 @@ public class ActionHandlerImpl implements ActionHandler {
         if(COMMAND_FACTORY.containsCommand(message.getText())) {
             COMMAND_FACTORY.getCommand(message.getText())
                            .execute(message,MESSAGE_SENDER,APP_DAO,KEYBOARD);
-        } else if (COMMAND_FACTORY.containsCommand("COMMAND_"+lastAction)) {
-            COMMAND_FACTORY.getCommand("COMMAND_"+lastAction)
+        } else if (COMMAND_FACTORY.containsCommand("COMMAND_"+getLastActionById(message.getChatId()))) {
+            COMMAND_FACTORY.getCommand("COMMAND_"+getLastActionById(message.getChatId()))
                            .execute(message,MESSAGE_SENDER,APP_DAO,KEYBOARD);
         } else {
             COMMAND_FACTORY.getCommand("COMMAND_DOES_NOT_EXIST")
@@ -72,9 +84,11 @@ public class ActionHandlerImpl implements ActionHandler {
     @Override
     public void handleOther(Message message) {
         SendMessage doNotSupport = new SendMessage();
+
         doNotSupport.setChatId(message.getChatId());
         doNotSupport.setReplyToMessageId(message.getMessageId());
         doNotSupport.setText("❌This message is not supported now❌");
+
         MESSAGE_SENDER.executeCustomMessage(doNotSupport);
 
         MESSAGE_SENDER.sendLog(String.valueOf(message.getChatId()),
@@ -82,5 +96,9 @@ public class ActionHandlerImpl implements ActionHandler {
                 "<- Bot: ❌This message is not supported now❌",
                 LogType.ERROR
         );
+    }
+
+    private String getLastActionById(long id) {
+        return APP_DAO.findById(id).getLastAction();
     }
 }

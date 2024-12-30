@@ -1,6 +1,7 @@
 package com.moldavets.SpringTelegramChannelManager.service.action.Impl;
 
 import com.moldavets.SpringTelegramChannelManager.dao.AppDAO;
+import com.moldavets.SpringTelegramChannelManager.entity.User;
 import com.moldavets.SpringTelegramChannelManager.service.action.Action;
 import com.moldavets.SpringTelegramChannelManager.service.message.Impl.ActionHandlerImpl;
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
@@ -52,7 +53,18 @@ public class ActionSendPosts implements Action {
                     """;
             } else {
                 SendPostsText = "⚠You don't have any linked group.⚠";
-                ActionHandlerImpl.lastAction = "MENU";
+
+                try {
+                    User tempUser = appDAO.findById(callbackQuery.getMessage().getChatId());
+                    tempUser.setLastAction("MENU");
+                    appDAO.update(tempUser);
+                } catch (Exception e) {
+                    messageSender.sendLog(String.valueOf(callbackQuery.getMessage().getChatId()),
+                                          callbackQuery.getFrom().getUserName(),
+                                          e.getMessage(),
+                                          LogType.ERROR
+                    );
+                }
             }
         } else {
             SendPostsText = """
@@ -61,8 +73,17 @@ public class ActionSendPosts implements Action {
                     Menu->My Profile->Buy subscription
                     """;
 
-            ActionHandlerImpl.lastAction = "MENU";
-
+            try {
+                User tempUser = appDAO.findById(callbackQuery.getMessage().getChatId());
+                tempUser.setLastAction("MENU");
+                appDAO.update(tempUser);
+            } catch (Exception e) {
+                messageSender.sendLog(String.valueOf(callbackQuery.getMessage().getChatId()),
+                                      callbackQuery.getFrom().getUserName(),
+                                      e.getMessage(),
+                                      LogType.ERROR
+                );
+            }
         }
 
         answer = MessageUtils.buildAnswer(SendPostsText,callbackQuery);
@@ -76,5 +97,4 @@ public class ActionSendPosts implements Action {
                               LogType.INFO
         );
     }
-
 }

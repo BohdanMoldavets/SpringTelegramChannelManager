@@ -80,6 +80,17 @@ public class CommandDeleteLinkedGroup implements Command {
                              "the first character of the Id group must be '-'.  Try again.",
                              LogType.ERROR);
         }
-        ActionHandlerImpl.lastAction = "MENU";
+
+        try {
+            User tempUser = appDAO.findById(message.getChatId());
+            tempUser.setLastAction("MENU");
+            appDAO.update(tempUser);
+        } catch (Exception e) {
+            messageSender.sendLog(String.valueOf(message.getChatId()),
+                                  message.getFrom().getUserName(),
+                                  e.getMessage(),
+                                  LogType.ERROR
+            );
+        }
     }
 }

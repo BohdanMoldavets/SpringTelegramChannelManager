@@ -17,6 +17,12 @@ public class User {
     @Column(name = "username")
     private String username;
 
+    @Column(name="last_message", length = 4096)
+    private String lastMessage;
+
+    @Column(name="last_action")
+    private String lastAction;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,
                fetch = FetchType.EAGER)
     private List<LinkedGroup> linkedGroups;
@@ -26,6 +32,7 @@ public class User {
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Subscription subscription;
+
 
     public User() {
         subscription = new Subscription();
@@ -46,6 +53,22 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getLastMessage() {
+        return lastMessage;
+    }
+
+    public void setLastMessage(String lastMessage) {
+        this.lastMessage = lastMessage;
+    }
+
+    public String getLastAction() {
+        return lastAction;
+    }
+
+    public void setLastAction(String lastAction) {
+        this.lastAction = lastAction;
     }
 
     public List<LinkedGroup> getLinkedGroups() {

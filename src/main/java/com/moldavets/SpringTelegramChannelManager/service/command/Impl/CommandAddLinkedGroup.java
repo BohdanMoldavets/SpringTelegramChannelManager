@@ -26,16 +26,27 @@ public class CommandAddLinkedGroup implements Command {
 
         long groupId;
         boolean isPresent = false;
+        User currentUser = null;
+        List<LinkedGroup> linkedGroups = null;
+
         SendMessage answer = new SendMessage();
 
         if(MessageUtils.isValidGroupId(message.getText().strip())) {
             groupId = Long.parseLong(message.getText().strip());
 
-            User currentUser = appDAO.findById(message.getChatId());
+            try {
+                currentUser = appDAO.findById(message.getChatId());
+                linkedGroups = currentUser.getLinkedGroups();
+            } catch (Exception e) {
+                messageSender.sendLog(String.valueOf(message.getChatId()),
+                                      message.getFrom().getUserName(),
+                                      e.getMessage(),
+                                      LogType.ERROR
+                );
+            }
 
-            List<LinkedGroup> linkedGroups = currentUser.getLinkedGroups();
 
-            if(!linkedGroups.isEmpty()) {
+            if( linkedGroups != null && !linkedGroups.isEmpty()) {
                 for(LinkedGroup linkedGroup : linkedGroups) {
                     if(linkedGroup.getGroupId() == groupId) {
                         isPresent = true;
@@ -49,13 +60,20 @@ public class CommandAddLinkedGroup implements Command {
                     LinkedGroup linkedGroup = new LinkedGroup(groupId);
 
                     currentUser.addLinkedGroup(linkedGroup);
-                    appDAO.update(currentUser);
+                    try {
+                        appDAO.update(currentUser);
+                    } catch (Exception e) {
+                        messageSender.sendLog(String.valueOf(message.getChatId()),
+                                              message.getFrom().getUserName(),
+                                              e.getMessage(),
+                                              LogType.ERROR
+                        );
+                    }
 
                     answer.setChatId(message.getChatId());
                     answer.setText("✅You have successfully linked group " + groupId);
 
                     messageSender.executeCustomMessage(answer);
-                    //messageSender.executeCustomMessage(keyboard.getMainMenu(message.getChatId()));
 
                     messageSender.sendLog(String.valueOf(message.getChatId()),
                             message.getFrom().getUserName(),
@@ -76,7 +94,6 @@ public class CommandAddLinkedGroup implements Command {
                 answer.setText("❌Selected group already linked to you " + groupId);
 
                 messageSender.executeCustomMessage(answer);
-                //messageSender.executeCustomMessage(keyboard.getMainMenu(message.getChatId()));
 
                 messageSender.sendLog(String.valueOf(message.getChatId()),
                         message.getFrom().getUserName(),
@@ -99,6 +116,17 @@ public class CommandAddLinkedGroup implements Command {
                                   LogType.ERROR);
         }
         messageSender.executeCustomMessage(keyboard.getMainMenu(message.getChatId()));
-        ActionHandlerImpl.lastAction = "MENU";
+
+        try {
+            User tempUser = appDAO.findById(message.getChatId());
+            tempUser.setLastAction("MENU");
+            appDAO.update(tempUser);
+        } catch (Exception e) {
+            messageSender.sendLog(String.valueOf(message.getChatId()),
+                    message.getFrom().getUserName(),
+                    e.getMessage(),
+                    LogType.ERROR
+            );
+        }
     }
 }

@@ -6,13 +6,11 @@ import com.moldavets.SpringTelegramChannelManager.entity.User;
 import com.moldavets.SpringTelegramChannelManager.service.action.Action;
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
+import com.moldavets.SpringTelegramChannelManager.utils.log.LogType;
 import com.moldavets.SpringTelegramChannelManager.utils.message.MessageUtils;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component("BUY_SUBSCRIPTION")
 public class ActionBuySubscription implements Action {
@@ -26,19 +24,27 @@ public class ActionBuySubscription implements Action {
                 " Congratulations you just got a monthly subscription for free!";
         EditMessageText answer = MessageUtils.buildAnswer(BuySubscriptionText,callbackQuery);
 
-        User currentUser = appDAO.findById(callbackQuery.getMessage().getChatId());
-        currentUser.getSubscription().addMonthlySubscription();
-        currentUser.getSubscription().setUser(currentUser);
-        appDAO.updateSubscription(currentUser.getSubscription());
+        //add a monthly subscription and change the role
+        try {
+            User currentUser = appDAO.findById(callbackQuery.getMessage().getChatId());
+            currentUser.getSubscription().addMonthlySubscription();
+            currentUser.getSubscription().setUser(currentUser);
+            appDAO.updateSubscription(currentUser.getSubscription());
 
-        Role tempRole = new Role();
-        tempRole.setRole("ROLE_SUBSCRIBER");
-        currentUser.setRole(tempRole);
-        appDAO.updateRole(currentUser.getRole());
+            Role tempRole = new Role();
+            tempRole.setRole("ROLE_SUBSCRIBER");
+            currentUser.setRole(tempRole);
+            appDAO.updateRole(currentUser.getRole());
+        } catch (Exception e) {
+            messageSender.sendLog(String.valueOf(callbackQuery.getMessage().getChatId()),
+                                  callbackQuery.getFrom().getUserName(),
+                                  e.getMessage(),
+                                  LogType.ERROR
+            );
+        }
 
 
         //creating buttons menu
-
         answer.setReplyMarkup(keyboard.getOnlyMenuButton());
         messageSender.executeEditMessage(answer);
 

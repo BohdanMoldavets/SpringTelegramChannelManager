@@ -9,15 +9,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 public interface MessageSender {
 
-    void sendMessage(Update update, String message);
     void sendMessage(String chatId, String message);
 
     void executeCustomMessage(SendMessage message);
     void executeEditMessage(EditMessageText message);
     void executeDeleteMessage(DeleteMessage message);
-    void executePhotoMessage(SendPhoto message);
 
-    void sendLog(Update update, String message, LogType logType);
     void sendLog(String chatId, String username, String message, LogType logType);
 
 }

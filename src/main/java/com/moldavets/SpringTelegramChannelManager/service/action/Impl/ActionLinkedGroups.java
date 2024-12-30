@@ -5,6 +5,7 @@ import com.moldavets.SpringTelegramChannelManager.entity.LinkedGroup;
 import com.moldavets.SpringTelegramChannelManager.service.action.Action;
 import com.moldavets.SpringTelegramChannelManager.service.message.Keyboard;
 import com.moldavets.SpringTelegramChannelManager.service.message.MessageSender;
+import com.moldavets.SpringTelegramChannelManager.utils.log.LogType;
 import com.moldavets.SpringTelegramChannelManager.utils.message.MessageUtils;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
@@ -24,8 +25,19 @@ public class ActionLinkedGroups implements Action {
 
         boolean isHaveLinkedGroups = false;
         StringBuilder stringBuilder = new StringBuilder();
+        List<LinkedGroup> linkedGroups = null;
 
-        List<LinkedGroup> linkedGroups = appDAO.findById(callbackQuery.getMessage().getChatId()).getLinkedGroups();
+
+        //get user linked groups
+        try {
+            linkedGroups = appDAO.findById(callbackQuery.getMessage().getChatId()).getLinkedGroups();
+        } catch (Exception e) {
+            messageSender.sendLog(String.valueOf(callbackQuery.getMessage().getChatId()),
+                                  callbackQuery.getFrom().getUserName(),
+                                  e.getMessage(),
+                                  LogType.ERROR
+            );
+        }
 
         if (linkedGroups != null && !linkedGroups.isEmpty()) {
             isHaveLinkedGroups = true;
