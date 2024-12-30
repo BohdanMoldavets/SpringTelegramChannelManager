@@ -1,0 +1,34 @@
+CREATE TABLE users (
+	id BIGINT PRIMARY KEY,
+	username VARCHAR(255) DEFAULT NULL,
+	last_message VARCHAR(4096) DEFAULT NULL,
+	last_action VARCHAR(255) DEFAULT NULL,
+	UNIQUE(id)
+);
+
+CREATE TABLE roles (
+	id SERIAL PRIMARY KEY,
+	user_id BIGINT NOT NULL,
+	role VARCHAR(50) NOT NULL,
+	UNIQUE(user_id),
+	FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
+CREATE TABLE linked_groups (
+	id SERIAL PRIMARY KEY,
+	user_id BIGINT NOT NULL,
+	group_id BIGINT NOT NULL,
+	UNIQUE(group_id),
+	FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE subscriptions (
+	id SERIAL PRIMARY KEY,
+	user_id BIGINT NOT NULL,
+	start_date TIMESTAMP DEFAULT NULL,
+	end_date TIMESTAMP DEFAULT NULL,
+	status BOOLEAN DEFAULT FALSE,
+	purchase_count INT DEFAULT 0,
+	FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
